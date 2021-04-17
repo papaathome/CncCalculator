@@ -1,0 +1,23 @@
+Development path:
+ * Add documentation.
+ * Call for user responces.
+ * Make FreeCAD tools library import v0.18 available at menu level.
+ * Split off libScaledType and use at nuget package level.
+
+Known problems:
+ * After editing a Materials Vc of Materials n field the background
+   colour no longer follows state changes (Editable or ReadOnly).
+
+Version: 0.1b 17/IV/2021
+ * Prepare to publish on github.
+ * Added MIT license
+
+Version: 0.1a 03/IV/2021
+ * Initial commit
+ * Using libScaledType at source level.
+ * Using Log4Net at nuget package level.
+ * Using Newtonsoft.Json at nuget package level.
+ * Added calculations.
+ * Added tools list, with import from FreeCAD v0.19 tools libraries.
+ * Added materials list.
+ * Added form location and toolstrip management.
