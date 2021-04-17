@@ -25,6 +25,9 @@ What are the points for CncCalculator that make it interesting? You can classify
  * Can import any FreeCAD tools library (both v0.18 or before and v0.19 or better)
  * Where you put it on the screen there it will be the next time you start it.
 
+Release history:
+ * v1.0-beta.0, first release (also available: v1.0-beta.0D, debug version).
+
 Project details:
  * Platform: Windows.
  * Language: C# (but avoiding as much as possible any C# specific constructions or .NET specific objects.)
