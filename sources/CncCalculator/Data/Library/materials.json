@@ -1,0 +1,95 @@
+{
+        "content version": "1",
+        "description": "Some generic materials values are an indication for use.",
+        "materials": {
+            "foam": {
+                "description": "insulation foam",
+                "use cutting speed": true,
+                "cutting speed": "1000 ft/min",
+                "spindle speed": "0 rpm",
+                "feed per tooth": "0.02 in/tooth",
+                "version": 1
+            },
+            "MDF (mm)" : {
+                "description": "MDF, 15 to 20 mm",
+                "use cutting speed": false,
+                "cutting speed": "0 mm/s",
+                "spindle speed": "18000 rpm",
+                "feed per tooth": "0.15 mm/tooth",
+                "version": 1
+            },
+            "MDF (in)" : {
+                "description": "MDF, 3/4 to 1 inch",
+                "use cutting speed": true,
+                "cutting speed": "650 ft/min",
+                "spindle speed": "0 rpm",
+                "feed per tooth": "0.006 in/tooth",
+                "version": 1
+            },
+            "Plywood" : {
+                "description": "Plywood",
+                "use cutting speed": false,
+                "cutting speed": "0 mm/s",
+                "spindle speed": "18000 rpm",
+                "feed per tooth": "0.007 in/tooth",
+                "version": 1
+            },
+            "Hardwood" : {
+                "description": "Hardwood",
+                "use cutting speed": false,
+                "cutting speed": "0 mm/s",
+                "spindle speed": "18000 rpm",
+                "feed per tooth": "0.005 in/tooth",
+                "version": 1
+            },
+            "Softwood" : {
+                "description": "Softwood",
+                "use cutting speed": false,
+                "cutting speed": "0 mm/s",
+                "spindle speed": "18000 rpm",
+                "feed per tooth": "0.008 in/tooth",
+                "version": 1
+            },
+            "Hard plastic" : {
+                "description": "Hard plastics",
+                "use cutting speed": false,
+                "cutting speed": "0 mm/s",
+                "spindle speed": "18000 rpm",
+                "feed per tooth": "0.003 in/tooth",
+                "version": 1
+            },
+            "Soft platic" : {
+                "description": "Soft plastics",
+                "use cutting speed": false,
+                "cutting speed": "0 mm/s",
+                "spindle speed": "18000 rpm",
+                "feed per tooth": "0.004 in/tooth",
+                "version": 1
+            },
+            "Acrylic" : {
+                "description": "Acrylic sheets.",
+                "use cutting speed": true,
+                "cutting speed": "500 ft/min",
+                "spindle speed": "0 rpm",
+                "feed per tooth": "0.004 in/tooth",
+                "version": 1
+            },
+            "Aluminium" : {
+                "description": "Aluminium",
+                "use cutting speed": true,
+                "cutting speed": "600 ft/min",
+                "spindle speed": "0 rpm",
+                "feed per tooth": "0.003 in/tooth",
+                "version": 1
+            },
+            "Steel" : {
+                "description": "Steel",
+                "use cutting speed": true,
+                "cutting speed": "200 ft/min",
+                "spindle speed": "0 rpm",
+                "feed per tooth": "0.0004 in/tooth",
+                "version": 1
+            }
+        },
+        "version": 1
+}

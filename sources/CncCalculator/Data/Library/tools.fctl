@@ -1,0 +1,45 @@
+{
+  "tools": [
+    {
+      "nr": 1,
+      "path": "3mm_Endmill.fctb"
+    },
+    {
+      "nr": 2,
+      "path": "5mm_Endmill.fctb"
+    },
+    {
+      "nr": 3,
+      "path": "5mm_Drill.fctb"
+    },
+    {
+      "nr": 4,
+      "path": "6mm_Ball_End.fctb"
+    },
+    {
+      "nr": 5,
+      "path": "6mm_Bullnose.fctb"
+    },
+    {
+      "nr": 6,
+      "path": "60degree_Vbit.fctb"
+    },
+    {
+      "nr": 7,
+      "path": "45degree_chamfer.fctb"
+    },
+    {
+      "nr": 8,
+      "path": "slittingsaw.fctb"
+    },
+    {
+      "nr": 9,
+      "path": "probe.fctb"
+    },
+    {
+      "nr": 10,
+      "path": "5mm-thread-cutter.fctb"
+    }
+  ],
+  "version": 1
+}

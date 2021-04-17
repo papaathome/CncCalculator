@@ -1,0 +1,130 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="As.Tools.Data.Scales.ScaledType">
+    <Position X="0.5" Y="0.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAQAIQAAAgAAhAIAAAAAAEEDIYMBIAAAggACAiA=</HashCode>
+      <FileName>Data\Scales\ScaledType.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Scale" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="As.Tools.Data.Scales.UnitX">
+    <Position X="6.5" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAABAAAAgAAAEAAAAAAAAAAAAAAAAAAAAAAAAQAA=</HashCode>
+      <FileName>Data\Scales\Unit.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="As.Tools.Data.Scales.UnitConstantX">
+    <Position X="9" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAABAAAAgAAAEAAAAAAAEAAAAAAAAAAAAAAAAQAA=</HashCode>
+      <FileName>Data\Scales\Constants.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="As.Tools.Data.Scales.UnitLengthX">
+    <Position X="11" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAABAAAAgAAAEAAAAAAAEAAAAAAAAAAAAAAAAQAA=</HashCode>
+      <FileName>Data\Scales\Lengths.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="As.Tools.Data.Scales.UnitWeightX">
+    <Position X="13" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAABAAAAgAAAEAAAAAAAEAAAAAAAAAAAAAAAAQAA=</HashCode>
+      <FileName>Data\Scales\Weights.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="As.Tools.Data.Scales.UnitTimeX">
+    <Position X="15" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAABAAAAgAAAEAAAAAAAEAAAAAAAAAAAAAAAAQAA=</HashCode>
+      <FileName>Data\Scales\Times.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="As.Tools.Data.Scales.UnitRotationX">
+    <Position X="17" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAABAAAAgAAAEAAAAAAAEAAAAAAAAAAAAAAAAQAA=</HashCode>
+      <FileName>Data\Scales\Rotations.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="As.Tools.Data.Scales.ScaledUnit">
+    <Position X="3.5" Y="4" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AIACAABAAAAAAAAEoAAAAAQAAAAAAIAAAAAAAAAAAiA=</HashCode>
+      <FileName>Data\Scales\ScaledUnit.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Unit" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="As.Tools.Data.Scales.Scale">
+    <Position X="3.5" Y="0.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAAAAAAAAAAEoAQAAABAAAAAAYAAAAAAAgAAAiA=</HashCode>
+      <FileName>Data\Scales\Scale.cs</FileName>
+      <NewMemberFileName>Data\Scales\ScaledUnit.cs</NewMemberFileName>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="As.Tools.Data.Scales.BaseUnit">
+    <Position X="6.5" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAIAAAAAAAABAACAAAAgAAACAAAAAAQA=</HashCode>
+      <FileName>Data\Scales\Unit.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="As.Tools.Data.Scales.BaseAttributes">
+    <Position X="6.5" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAAAAAAAAAAAAABAAAAAAAAAAAACAACAAAAgAAA=</HashCode>
+      <FileName>Data\Scales\Unit.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="As.Tools.Data.Scales.Unit">
+    <Position X="6.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAACAAAQEIUBAAAAAAAAMAAAACCIYoECAAEAAAA=</HashCode>
+      <FileName>Data\Scales\Unit.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="As.Tools.Data.Scales.UnitConstant">
+    <Position X="9" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAACCAAAAAAA=</HashCode>
+      <FileName>Data\Scales\Constants.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="As.Tools.Data.Scales.UnitLength">
+    <Position X="11" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAACAAAAAIUAAAAAAAAAAAAAAAAAIgGAAAAAAAA=</HashCode>
+      <FileName>Data\Scales\Lengths.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="As.Tools.Data.Scales.UnitWeight">
+    <Position X="13" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAEAABAAAAAAAAMAAAACAIIACAAAAAAAA=</HashCode>
+      <FileName>Data\Scales\Weights.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="As.Tools.Data.Scales.UnitTime">
+    <Position X="15" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAQICAAAAAAAA=</HashCode>
+      <FileName>Data\Scales\Times.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="As.Tools.Data.Scales.UnitRotation">
+    <Position X="17" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAEAAAA=</HashCode>
+      <FileName>Data\Scales\Rotations.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
