@@ -8,6 +8,10 @@ Known problems:
  * After editing a Materials Vc of Materials n field the background
    colour no longer follows state changes (Editable or ReadOnly).
 
+Version: 0.1b 13/X/2024
+ * Changed MIT license to 'MIT No Attribution'
+
+
 Version: 0.1b 17/IV/2021
  * Prepare to publish on github.
  * Added MIT license
