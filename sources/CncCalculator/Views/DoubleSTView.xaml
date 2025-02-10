@@ -1,0 +1,63 @@
+﻿<UserControl
+    x:Class="As.Applications.Views.DoubleSTView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    xmlns:local="clr-namespace:As.Applications.Views"
+    xmlns:viewmodels="clr-namespace:As.Applications.ViewModels"
+    xmlns:data="clr-namespace:As.Applications.Converters"
+    d:DataContext="{d:DesignInstance Type=viewmodels:DoubleSTViewModel}"
+    mc:Ignorable="d" 
+    d:DesignHeight="24" d:DesignWidth="380">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <data:ConverterToDoubleCi x:Key="ConverterToDoubleCi" />
+            <Style TargetType="{x:Type TextBox}">
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="Margin" Value="3" />
+                <Setter Property="Validation.ErrorTemplate">
+                    <Setter.Value>
+                        <ControlTemplate>
+                            <DockPanel LastChildFill="true">
+                                <Border 
+                                    Background="Red" DockPanel.Dock="Right" Margin="5,0,6,0" Width="20" Height="20" CornerRadius="10"
+                                    ToolTip="{Binding ElementName=CustomAdorner, Path=AdornedElement.(Validation.Errors)[0].ErrorContent}">
+                                    <TextBlock Text="!" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold" Foreground="White" />
+                                </Border>
+                                <AdornedElementPlaceholder Name="CustomAdorner" VerticalAlignment="Center" >
+                                    <Border BorderBrush="Red" BorderThickness="1" />
+                                </AdornedElementPlaceholder>
+                            </DockPanel>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto" MinWidth="66" />
+            <ColumnDefinition Width="*" MinWidth="110" />
+            <ColumnDefinition Width="auto" MinWidth="100" />
+        </Grid.ColumnDefinitions>
+        <TextBlock
+            Grid.Column="0" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Right"
+            Text="{Binding Path=Name}" />
+        <TextBox
+            Grid.Column="1" Margin="3,0,36,0" VerticalAlignment="Center"
+            IsReadOnly="{Binding Path=ValueIsReadOnly}"
+            Text="{
+                Binding Path=Value,
+                Converter={StaticResource ConverterToDoubleCi}, ConverterParameter=0.###,
+                UpdateSourceTrigger=LostFocus,
+                ValidatesOnDataErrors=true,
+                NotifyOnValidationError=true
+            }"/>
+        <ComboBox
+            Grid.Column="2" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Stretch"
+            IsReadOnly="true"
+            ItemsSource="{Binding Domain}"
+            Text="{Binding Scale}" />
+    </Grid>
+</UserControl>

@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-
+﻿using As.Tools.Data.Parsers;
 using As.Tools.Data.Scanners;
-using As.Tools.Data.Parsers;
 
 namespace As.Tools.Data.Scales
 {
-    internal class ScaleParser : Parser
+    internal class ScaleParser(IScanner scanner) : Parser(scanner)
     {
         public static bool TryParse(string value, out Scale scale)
         {
@@ -18,24 +15,24 @@ namespace As.Tools.Data.Scales
 
                 parser.Execute();
 
-                result = parser.ParseOK;
-                scale = parser.result;
+                result = parser.ParseOK && (parser.Result is not null);
+                scale = parser.Result ?? [];
             }
+#if USE_LOG4NET
             catch (Exception x)
             {
-#if USE_LOG4NET
                 log.Debug($"ScaleParser: problem while parsing: '{x}'");
+#else
+            catch (Exception)
+            {
 #endif
                 result = false;
-                scale = null;
+                scale = [];
             }
             return result;
         }
 
-        public ScaleParser(IScanner scanner) : base(scanner)
-        { }
-
-        public Scale result { get; private set; }
+        public Scale? Result { get; private set; }
 
         #region grammar v1.0
         #region preamble
@@ -99,7 +96,7 @@ namespace As.Tools.Data.Scales
         #endregion
         #endregion
 
-#pragma warning disable IDE1006 // Naming Styles
+        #pragma warning disable IDE1006 // Naming Styles
         #region preamble
         //
         // %start scale
@@ -109,7 +106,7 @@ namespace As.Tools.Data.Scales
         {
             Scanner.SetState(ScaleScanner.States.NORMAL);
 
-            result = scale();
+            Result = scale();
         }
         #endregion
 
@@ -151,7 +148,7 @@ namespace As.Tools.Data.Scales
             return ss;
         }
 
-        bool is_groups_starter(ref Token t)
+        static bool is_groups_starter(ref Token t)
         {
             return is_segment_starter(ref t);
         }
@@ -176,8 +173,7 @@ namespace As.Tools.Data.Scales
             {
                 GetToken();
 
-                int one;
-                if (!int.TryParse(t.Value, out one) || (one != 1)) throw new ParserException(t, "segment ::= . 1 '/' '(' groups ')'");
+                if (!int.TryParse(t.Value, out int one) || (one != 1)) throw new ParserException(t, "segment ::= . 1 '/' '(' groups ')'");
 
                 ss = new Scale( new ScaledUnit(Unit.c, 1));
                 s3_mandatory = true;
@@ -198,7 +194,7 @@ namespace As.Tools.Data.Scales
             return ss;
         }
 
-        bool is_segment_starter(ref Token t)
+        static bool is_segment_starter(ref Token t)
         {
             return
                 t.Id.EQ(TokenId.INT) |
@@ -232,7 +228,7 @@ namespace As.Tools.Data.Scales
             }
         }
 
-        bool is_part_starter(ref Token t)
+        static bool is_part_starter(ref Token t)
         {
             return
                 t.Id.EQ(TokenId.PARENTESES_OPEN) ||
@@ -251,8 +247,7 @@ namespace As.Tools.Data.Scales
             if (!t.Id.EQ(TokenId.NAME)) throw new ParserException(t, "unit ::= . NAME ( '^' INT )?");
             GetToken();
 
-            Unit s1;
-            if (!ScaledUnit.TryParse(t.Value, out s1)) throw new ParserException(t, $"unit ::= . '{t.Value}' ( '^' INT )? ; NAME '{t.Value}' not recognised.");
+            if (!ScaledUnit.TryParse(t.Value, out Unit s1)) throw new ParserException(t, $"unit ::= . '{t.Value}' ( '^' INT )? ; NAME '{t.Value}' not recognised.");
 
             int s3 = 1;
             t = PeekToken();
@@ -263,13 +258,15 @@ namespace As.Tools.Data.Scales
                 t = PeekToken();
                 if (!t.Id.EQ(TokenId.INT)) throw new ParserException(t, "unit ::= NAME '^' . INT");
                 GetToken();
-                s3 = int.Parse(t.Value);
+
+                if (t.Value is not null) s3 = int.Parse(t.Value);
+                else throw new ParserException(t, "unit ::= NAME '^' . INT");
             }
 
             return new ScaledUnit(s1, s3);
         }
 
-        bool is_unit_starter(ref Token t)
+        static bool is_unit_starter(ref Token t)
         {
             return t.Id.EQ(TokenId.NAME);
         }

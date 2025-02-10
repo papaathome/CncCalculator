@@ -1,7 +1,7 @@
 ﻿namespace As.Tools.Data.Parsers
 {
     /// <summary>
-    /// Optional builder to use by the (base) parser
+    /// Optional Builder to use by the (base) parser
     /// </summary>
     /// <remarks>
     /// The actual parser implementation can extend on this interface.

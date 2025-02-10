@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-using As.Tools.Data.Scanners;
+﻿using As.Tools.Data.Scanners;
 
 namespace As.Tools.Data.Parsers
 {
@@ -11,7 +8,7 @@ namespace As.Tools.Data.Parsers
     public abstract class Parser
     {
 #if USE_LOG4NET
-        protected static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        protected static readonly log4net.ILog log = log4net.LogManager.GetLogger(nameof(Parser));
 #endif
 
         /// <summary>
@@ -19,10 +16,10 @@ namespace As.Tools.Data.Parsers
         /// </summary>
         /// <param name="scanner">Scanner to use</param>
         /// <param name="log">hook to give feedback on progress and problems.</param>
-        protected Parser(IScanner scanner, IBuilder builder = null)
+        protected Parser(IScanner scanner, IBuilder? builder = null)
         {
-            Scanner = scanner ?? throw new ArgumentNullException("scanner");
-            this.builder = builder;
+            Scanner = scanner ?? throw new ArgumentNullException(nameof(scanner));
+            Builder = builder;
 
             HandleErrors = true;
             SkipComment = true;
@@ -35,30 +32,30 @@ namespace As.Tools.Data.Parsers
         abstract protected void ParseGrammar();
 
         /// <summary>
-        /// Parse all data, optionally use a builder for the result
+        /// Parse all data, optionally use a Builder for the result
         /// </summary>
-        /// <param name="builder">builder accepting parse results</param>
-        public void Execute(IBuilder builder = null)
+        /// <param name="builder">Builder accepting parse results</param>
+        public void Execute(IBuilder? builder = null)
         {
-            this.builder = builder;
+            Builder = builder;
             try
             {
                 ParseTried = true;
                 ParseOK = false;
                 ParseError = null;
-                if (builder != null) builder.BeginLoadData();
+                builder?.BeginLoadData();
                 ParseGrammar();
-                Token token = GetToken();
+                var token = GetToken();
 
                 if (token.Id == (int)Scanner.TokenEOT) ParseOK = true;
                 else Error($"Expected EOT token {Scanner.TokenEOT}", token);
             }
-            catch (ParserException px)
+            catch (ParserException x)
             {
 #if USE_LOG4NET
-                log.Error("Parse problem", px);
+                log.Error("Parse problem", x);
 #endif
-                ParseError = px;
+                ParseError = x;
             }
             catch (Exception x)
             {
@@ -69,7 +66,7 @@ namespace As.Tools.Data.Parsers
             }
             finally
             {
-                if (builder != null) builder.EndLoadData();
+                builder?.EndLoadData();
             }
         }
 
@@ -81,7 +78,7 @@ namespace As.Tools.Data.Parsers
         /// <summary>
         /// Builder to use while parsing
         /// </summary>
-        IBuilder builder;
+        IBuilder? Builder;
 
         /// <summary>
         /// Has the parse already been tried?
@@ -96,7 +93,7 @@ namespace As.Tools.Data.Parsers
         /// <summary>
         /// Last major problem seen before the parse failed
         /// </summary>
-        public Exception ParseError { get; private set; }
+        public Exception? ParseError { get; private set; }
 
         /// <summary>
         /// Look for the next token
@@ -137,12 +134,12 @@ namespace As.Tools.Data.Parsers
         /// </summary>
         protected bool SkipEol { get; set; }
 
-        protected List<int> CommentToken = new List<int>();
+        protected List<int> CommentToken = [];
 
         /// <summary>
         /// Fetch tokens from the scanner until a usefull one or an error.
         /// </summary>
-        /// <param name="get">get (true) or lookahead (false)</param>
+        /// <param name="get">get (true) or Lookahead (false)</param>
         /// <returns>The next usefull token form the scanner, or an error</returns>
         Token Fetch(bool get = false)
         {
@@ -162,18 +159,21 @@ namespace As.Tools.Data.Parsers
                 {
                     switch (token.Id)
                     {
-                        case (int)_TokenId._COMMENT_:
+                        case (int)TokenIdBase._COMMENT_:
                             if (SkipComment)
                             {
                                 if (!get) Scanner.GetToken();
                             }
                             else skip = false;
                             break;
-                        case (int)_TokenId._ERROR_:
-                            if (HandleErrors) Error("Scanner error", token);
+                        case (int)TokenIdBase._ERROR_:
+                            if (HandleErrors)
+                            {
+                                Error("Scanner error", token);
+                            }
                             skip = false;
                             break;
-                        case (int)_TokenId._EOL_:
+                        case (int)TokenIdBase._EOL_:
                             if (SkipEol)
                             {
                                 if (!get) Scanner.GetToken();
@@ -195,7 +195,7 @@ namespace As.Tools.Data.Parsers
         /// </summary>
         /// <param name="token">Actual token found</param>
         /// <param name="msg">More details from the parser implementation</param>
-        void UnexpectedTokenError(Token token, String msg)
+        static void UnexpectedTokenError(Token token, string msg)
         {
             throw new ParserException(token, $"Unexpected token: {msg}");
         }
@@ -205,7 +205,7 @@ namespace As.Tools.Data.Parsers
         /// </summary>
         /// <param name="msg">More detaild from the parser implementation</param>
         /// <param name="token">Last token seen</param>
-        void Error(String msg, Token token)
+        static void Error(string msg, Token token)
         {
             throw new ParserException(token, msg);
         }

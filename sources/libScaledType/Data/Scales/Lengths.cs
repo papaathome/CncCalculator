@@ -27,21 +27,22 @@
         {
             switch (me)
             {
-                case UnitLength. m:   return 1.0;                                       //      meter [m],           1 m = Standard unit of length
-                case UnitLength.dm:   return 10.0 * UnitLength.m.Factor();              //  decimeter [dm/m],        1 m = 10 dm
-                case UnitLength.cm:   return 100.0 * UnitLength.m.Factor();             // centimeter [cm/m],        1 m = 100 cm
-                case UnitLength.mm:   return 1000.0 * UnitLength.m.Factor();            //  milimeter [mm/m],        1 m = 1000 mm
+                case UnitLength. m: return 1.0;                                       //      meter [m],           1 m = Standard unit of length
+                case UnitLength.dm: return 10.0 * UnitLength.m.Factor();              //  decimeter [dm/m],        1 m = 10 dm
+                case UnitLength.cm: return 100.0 * UnitLength.m.Factor();             // centimeter [cm/m],        1 m = 100 cm
+                case UnitLength.mm: return 1000.0 * UnitLength.m.Factor();            //  milimeter [mm/m],        1 m = 1000 mm
 
                 // international yard and pound agreemend 1959.
                 case UnitLength.mile: return UnitLength.yd.Factor() / 1760.0;           //       mile [mile/yd], 1760 yd = 1 mile
                 case UnitLength.  yd: return (1250.0 / 1143.0) * UnitLength.m.Factor(); //       yard [yd/m],    1250 (international) yards = 1143 meters
                 case UnitLength.  ft: return 3.0 * UnitLength.yd.Factor();              //       foot [ft/yd],      3 ft = 1 yd
                 case UnitLength.inch: return 36.0 * UnitLength.yd.Factor();             //       inch [in/yd],     36 in = 1 yd
-            }
+                default:
 #if USE_LOG4NET
-            log.Debug($"Lengths: type not recognised: '(UnitLength)0x{(ulong)me:x16}'");
+                    log.Debug($"Lengths: type not recognised: '(UnitLength)0x{(ulong)me:x16}'");
 #endif
-            return 0.0;
+                    return 0.0;
+            }
         }
 
         static public Unit Base(this UnitLength me)
@@ -53,21 +54,22 @@
         {
             switch (me)
             {
-                case UnitLength. m:   return (append_brackets) ? "[m]" : "m";
-                case UnitLength.dm:   return (append_brackets) ? "[dm]" : "dm";
-                case UnitLength.cm:   return (append_brackets) ? "[cm]" : "cm";
-                case UnitLength.mm:   return (append_brackets) ? "[mm]" : "mm";
+                case UnitLength.   m: return (append_brackets) ? "[m]" : "m";
+                case UnitLength.  dm: return (append_brackets) ? "[dm]" : "dm";
+                case UnitLength.  cm: return (append_brackets) ? "[cm]" : "cm";
+                case UnitLength.  mm: return (append_brackets) ? "[mm]" : "mm";
 
                 case UnitLength.mile: return (append_brackets) ? "[mile]" : "mile";
                 case UnitLength.  yd: return (append_brackets) ? "[yd]" : "yd";
                 case UnitLength.  ft: return (append_brackets) ? "[ft]" : "ft";
                 case UnitLength.inch: return (append_brackets) ? "[in]" : "in";
-            }
-            var msg = $"(UnitLength)0x{(ulong)me:x16}";
+                default:
+                    var msg = $"(UnitLength)0x{(ulong)me:x16}";
 #if USE_LOG4NET
-            log.Debug($"Lengths: type not recognised: '{msg}'");
+                    log.Debug($"Lengths: type not recognised: '{msg}'");
 #endif
-            return (append_brackets) ? $"[{msg}]" : msg;
+                    return (append_brackets) ? $"[{msg}]" : msg;
+            }
         }
 
         static public string Description(this UnitLength me)
@@ -83,12 +85,13 @@
                 case UnitLength.  yd: return "(international) yard: 1250 [yd] = 1143 [m] (Int yard and pound agreemend 1959)";
                 case UnitLength.  ft: return "foot: 3 [ft] = 1 [yd]";
                 case UnitLength.inch: return "inch:  36 [in] = 1 [yd]";
-            }
-            var msg = $"(UnitLength)0x{(ulong)me:x16}";
+                default:
+                    var msg = $"(UnitLength)0x{(ulong)me:x16}";
 #if USE_LOG4NET
-            log.Debug($"Lengths: type not recognised: '{msg}'");
+                    log.Debug($"Lengths: type not recognised: '{msg}'");
 #endif
-            return $"Length: [{msg}]";
+                    return $"Length: [{msg}]";
+                    }
         }
 
         static public bool TryParse(string value, out Unit unit)
@@ -104,9 +107,8 @@
                 case "yd":   unit = Unit.yd;   return true;
                 case "ft":   unit = Unit.ft;   return true;
                 case "in":   unit = Unit.inch; return true;
+                default:     unit = BASE;      return false;
             }
-            unit = BASE;
-            return false;
         }
     }
 
@@ -123,8 +125,8 @@
     //      = 39.370[in]                                        # reduced
 
     // example foot to meters:
-    // double y_ft = 3;         // value in foot.
-    // double y_m  = y_ft / ft; // value in meters.
+    // double y_ft = 3;         // _value in foot.
+    // double y_m  = y_ft / ft; // _value in meters.
     //
     // check:
     // y_ft = 3[ft]

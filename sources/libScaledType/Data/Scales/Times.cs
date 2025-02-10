@@ -21,14 +21,15 @@
         {
             switch (me)
             {
-                case UnitTime.  s: return 1.0;                                 // second [s, "],    1" = Standard unit of time
+                case UnitTime.s:   return 1.0;                                 // second [s, "],    1" = Standard unit of time
                 case UnitTime.min: return UnitTime.s.Factor() / 60.0;          // minute [min, '], 60" = 1'
-                case UnitTime.  h: return UnitTime.s.Factor() / (60.0 * 60.0); //   hour [h],      60' = 1 h
-            }
+                case UnitTime.h:   return UnitTime.s.Factor() / (60.0 * 60.0); //   hour [h],      60' = 1 h
+                default:
 #if USE_LOG4NET
-            log.Debug($"Time: type not recognised: '(UnitTime)0x{(ulong)me:x16}'");
+                    log.Debug($"Time: type not recognised: '(UnitTime)0x{(ulong)me:x16}'");
 #endif
-            return 0.0;
+                    return 0.0;
+            }
         }
 
         static public Unit Base(this UnitTime me)
@@ -43,12 +44,13 @@
                 case UnitTime.  s: return (append_brackets) ? "[s]" : "s";
                 case UnitTime.min: return (append_brackets) ? "[min]" : "min";
                 case UnitTime.  h: return (append_brackets) ? "[h]" : "h";
-            }
-            var msg = $"(UnitTime)0x{(ulong)me:x16}";
+                default:
+                    var msg = $"(UnitTime)0x{(ulong)me:x16}";
 #if USE_LOG4NET
-            log.Debug($"Time: type not recognised: '{msg}'");
+                    log.Debug($"Time: type not recognised: '{msg}'");
 #endif
-            return (append_brackets) ? $"[{msg}]" : msg;
+                    return (append_brackets) ? $"[{msg}]" : msg;
+                    }
         }
 
         static public string Description(this UnitTime me)

@@ -1,27 +1,45 @@
-Development path:
+Development path
+================
+
+Requirement status:
+ * ? Requested, may move to a following release.
+ * . Not yet implemented.
+ * x Implemented but partial, untested or broken.
+ * v Implemented and tested.
+
+Version x.y.0.0, wishlist:
  * Add documentation.
  * Call for user responces.
  * Make FreeCAD tools library import v0.18 available at menu level.
  * Split off libScaledType and use at nuget package level.
 
-Known problems:
- * After editing a Materials Vc of Materials n field the background
-   colour no longer follows state changes (Editable or ReadOnly).
+Known problems not yet solved (and also not a problem for CncCalculator):
+ 1 Design flaw: Any scale "[x/x]" = "[x^0]" is reduced to "[#]" = "[#^1]", any "[#^n]" is reduced to "[#^1]"
+   Any scale "[x^0]" is a valid "dimentionless constant of scale x" and should not reduce to a "constant with no scale"
+   (not a problem for CncCalculator)
+ 2 Scanner stream input position not calculated correct in .NET 8 (not a problem for libScaledType).
+
+Version: 0.3.0b not yet released.
+ * v Moved libScaledType to .NET 8
+ * v Moved CncCalculater to .NET 8, using WPF + Caliburn Micro, redesigned GUI.
+ * v Added NUnit tests on libScaledType classes (except for the recursive descent parser)
+ * v libScaledType using INumber<T> for values, can use any type that supports this interface.
+ * v Added NUnit tests on CncCalculator classes
+ * v Added Converter tag, moved calculations to 'Feeds and Speeds' tab
 
 Version: 0.1b 13/X/2024
- * Changed MIT license to 'MIT No Attribution'
-
+ * v Changed MIT license to 'MIT No Attribution'
 
 Version: 0.1b 17/IV/2021
- * Prepare to publish on github.
- * Added MIT license
+ * v Prepare to publish on github.
+ * v Added MIT license
 
 Version: 0.1a 03/IV/2021
- * Initial commit
- * Using libScaledType at source level.
- * Using Log4Net at nuget package level.
- * Using Newtonsoft.Json at nuget package level.
- * Added calculations.
- * Added tools list, with import from FreeCAD v0.19 tools libraries.
- * Added materials list.
- * Added form location and toolstrip management.
+ * v Initial commit
+ * v Using libScaledType at source level.
+ * v Using Log4Net at nuget package level.
+ * v Using Newtonsoft.Json at nuget package level.
+ * v Added calculations.
+ * v Added tools list, with import from FreeCAD v0.19 tools libraries.
+ * v Added materials list.
+ * v Added form location and toolstrip management.

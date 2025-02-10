@@ -7,14 +7,14 @@ namespace As.Tools.Data.Scales
     public enum TokenId
     {
         /// <summary>
-        /// Eno of Text reached.
+        /// End of Text reached.
         /// </summary>
-        _EOT_ = _TokenId._EOT_,
+        _EOT_ = TokenIdBase._EOT_,
 
         /// <summary>
         /// Scanner in error state
         /// </summary>
-        _ERROR_ = _TokenId._ERROR_,
+        _ERROR_ = TokenIdBase._ERROR_,
 
         NAME              = 1, // [a-zAZ]+
         INT,                   // [+-]?[0-9]+
@@ -34,26 +34,20 @@ namespace As.Tools.Data.Scales
 
         public static string Text(this TokenId value, bool as_symbol = true)
         {
-            var result = "";
-            switch (value)
+            string? result = value switch
             {
-                case TokenId._EOT_:               result = "_EOT_"; break;
-                case TokenId._ERROR_:             result = "_ERROR_"; break;
-
-                case TokenId.NAME:                result = (as_symbol) ? "#" : "[A-Za-z]+"; break;
-                case TokenId.INT:                 result = "([+-]?[1-9][0-9]*|0)"; break;
-
-                case TokenId.BRACKET_OPEN:        result = "["; break;
-                case TokenId.BRACKET_CLOSE:       result = "]"; break;
-
-                case TokenId.PARENTESES_OPEN:     result = "("; break;
-                case TokenId.PARENTESES_CLOSE:    result = ")"; break;
-
-                case TokenId.PWR:                 result = "^"; break;
-                case TokenId.DIV:                 result = "/"; break;
-
-                default: result = $"{value}"; break;
-            }
+                TokenId._EOT_            => "_EOT_",
+                TokenId._ERROR_          => "_ERROR_",
+                TokenId.NAME             => (as_symbol) ? "#" : "[A-Za-z]+",
+                TokenId.INT              => "([+-]?[1-9][0-9]*|0)",
+                TokenId.BRACKET_OPEN     => "[",
+                TokenId.BRACKET_CLOSE    => "]",
+                TokenId.PARENTESES_OPEN  => "(",
+                TokenId.PARENTESES_CLOSE => ")",
+                TokenId.PWR              => "^",
+                TokenId.DIV              => "/",
+                _                        => $"{value}",
+            };
             return result;
         }
 

@@ -1,35 +1,49 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27004.2010
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35303.130
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CncCalculator", "CncCalculator\CncCalculator.csproj", "{E2721E7F-1C2E-4378-9838-BE66613D3C8D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "libScaledType", "libScaledType\libScaledType.csproj", "{8D223F8F-EB72-4031-9D1A-F0F78992D2B4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "libScaledType", "libScaledType\libScaledType.csproj", "{D00E1081-0A3C-492E-BFCE-741A08A21180}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "libScaledTypeTest", "libScaledTypeTest\libScaledTypeTest.csproj", "{0F525C36-374F-45F4-9E35-5C4325860F64}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CncCalculator", "CncCalculator\CncCalculator.csproj", "{6561D7CB-E4B3-4EBE-8FA0-0ADD5F318A58}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_solution", "_solution", "{1A6438F9-EFF4-4706-9633-9B2406FE0FA0}"
+	ProjectSection(SolutionItems) = preProject
+		..\ChangeLog.txt = ..\ChangeLog.txt
+		..\README.md = ..\README.md
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CncCalculatorTest", "CncCalculatorTest\CncCalculatorTest.csproj", "{F51F4CBF-0E57-453D-B5EB-721F42042278}"
 EndProject
 Global
-	GlobalSection(SubversionScc) = preSolution
-		Svn-Managed = True
-		Manager = AnkhSVN - Subversion Support for Visual Studio
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{E2721E7F-1C2E-4378-9838-BE66613D3C8D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E2721E7F-1C2E-4378-9838-BE66613D3C8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E2721E7F-1C2E-4378-9838-BE66613D3C8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E2721E7F-1C2E-4378-9838-BE66613D3C8D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D00E1081-0A3C-492E-BFCE-741A08A21180}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D00E1081-0A3C-492E-BFCE-741A08A21180}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D00E1081-0A3C-492E-BFCE-741A08A21180}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D00E1081-0A3C-492E-BFCE-741A08A21180}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D223F8F-EB72-4031-9D1A-F0F78992D2B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D223F8F-EB72-4031-9D1A-F0F78992D2B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D223F8F-EB72-4031-9D1A-F0F78992D2B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D223F8F-EB72-4031-9D1A-F0F78992D2B4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0F525C36-374F-45F4-9E35-5C4325860F64}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F525C36-374F-45F4-9E35-5C4325860F64}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F525C36-374F-45F4-9E35-5C4325860F64}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F525C36-374F-45F4-9E35-5C4325860F64}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6561D7CB-E4B3-4EBE-8FA0-0ADD5F318A58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6561D7CB-E4B3-4EBE-8FA0-0ADD5F318A58}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6561D7CB-E4B3-4EBE-8FA0-0ADD5F318A58}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6561D7CB-E4B3-4EBE-8FA0-0ADD5F318A58}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F51F4CBF-0E57-453D-B5EB-721F42042278}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F51F4CBF-0E57-453D-B5EB-721F42042278}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F51F4CBF-0E57-453D-B5EB-721F42042278}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F51F4CBF-0E57-453D-B5EB-721F42042278}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {5B4290B7-BB97-4B88-AA70-26C917D77985}
+		SolutionGuid = {A8586F95-E3EE-4763-89B0-D2E31C54D22C}
 	EndGlobalSection
 EndGlobal

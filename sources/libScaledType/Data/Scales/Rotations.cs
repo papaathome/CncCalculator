@@ -24,11 +24,12 @@
                 case UnitRotation.rps: return 1.0 / UnitTime.s.Factor();   // rotation per second [rps, 1/s, Hz],  1 rps = 1 Hz.
                 case UnitRotation.rpm: return 1.0 / UnitTime.min.Factor(); // rotation per minute [rpm],          60 rpm = 1 rps
                 case UnitRotation.rph: return 1.0 / UnitTime.h.Factor();   //   rotation per hour [rph],          60 rph = 1 rpm
-            }
+                default:
 #if USE_LOG4NET
-            log.Debug($"Rotation: type not recognised: '(UnitRotation)0x{(ulong)me:x16}'");
+                    log.Debug($"Rotation: type not recognised: '(UnitRotation)0x{(ulong)me:x16}'");
 #endif
-            return 0.0;
+                    return 0.0;
+            }
         }
 
         static public Unit Base(this UnitRotation me)
@@ -43,12 +44,13 @@
                 case UnitRotation.rps: return (append_brackets) ? "[rps]" : "rps";
                 case UnitRotation.rpm: return (append_brackets) ? "[rpm]" : "rpm";
                 case UnitRotation.rph: return (append_brackets) ? "[rph]" : "rph";
-            }
-            var msg = $"(UnitRotation)0x{(ulong)me:x16}";
+                default:
+                    var msg = $"(UnitRotation)0x{(ulong)me:x16}";
 #if USE_LOG4NET
-            log.Debug($"Rotation: type not recognised: '{msg}'");
+                    log.Debug($"Rotation: type not recognised: '{msg}'");
 #endif
-            return (append_brackets) ? $"{msg}]" : msg;
+                    return (append_brackets) ? $"{msg}]" : msg;
+            }
         }
 
         static public string Description(this UnitRotation me)

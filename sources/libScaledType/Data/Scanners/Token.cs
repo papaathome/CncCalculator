@@ -1,48 +1,54 @@
-﻿using System.Collections.Generic;
-using System.Text;
+﻿using System.Text;
 
 namespace As.Tools.Data.Scanners
 {
     /// <summary>
-    /// Abstract Token: representing a token from an input stream.
+    /// Abstract Token: representing a token from an InputStream stream.
     /// </summary>
     public abstract class Token
     {
         /// <summary>
         /// Token from a stream.
         /// </summary>
+        /// <param name="scanner_state">Boxed scanner scanner_state with this token, type not disclosed.</param>
+        /// <param name="symbol">Boxed token identification.</param>
         /// <param name="position">Position in the stream.</param>
-        /// <param name="id">Token identification.</param>
-        /// <param name="symbol">Object of the id part.</param>
-        /// <param name="value">Text representation of the value part</param>
+        /// <param name="value">Text representation of the _value part</param>
         /// <param name="value_parts">Set true to use a list of (additional named) valuses.</param>
-        public Token(object state, object symbol, Position position, string value, bool value_parts)
+        #pragma warning disable IDE0290 // Use primary constructor
+        public Token(
+        #pragma warning restore IDE0290 // Use primary constructor
+            object scanner_state,
+            object symbol,
+            Position position,
+            string? value,
+            bool value_parts)
         {
-            State = state;
+            ScannerState = scanner_state;
             Symbol = symbol;
             Position = position;
             Value = value;
-            Values = (value_parts)
-                ? new Dictionary<string, string>()
-                : null;
+            Values = (value_parts) ? [] : null;
         }
 
         /// <summary>
-        /// Scanner state with this token.
+        /// Boxed scanner scanner_state with this token, type not disclosed.
         /// </summary>
-        public readonly object State;
+        /// <remarks>ScannerState is (or inherits from) a `ScannerState'</remarks>
+        public object ScannerState { get; }
 
         /// <summary>
-        /// Token representation.
+        /// Boxed token identification.
         /// </summary>
-        public readonly object Symbol;
+        /// <remarks>Symbol is a boxed `enum TokenId : int' which is definded by the scanner user.</remarks>
+        public object Symbol { get; }
 
         /// <summary>
         /// Token identification.
         /// </summary>
         public int Id { get { return (int)Symbol; } }
 
-        public string Name { get { return Symbol.ToString(); } }
+        public string Name { get { return $"{Symbol}"; } }
 
         /// <summary>
         /// Position in the stream.
@@ -50,45 +56,45 @@ namespace As.Tools.Data.Scanners
         public readonly Position Position;
 
         /// <summary>
-        /// Text representation of the value part.
+        /// Text representation of the _value part.
         /// </summary>
-        public readonly string Value;
+        public readonly string? Value;
 
         /// <summary>
         /// Actual values for this token (as text representation in the stream).
         /// </summary>
-        protected Dictionary<string, string> Values;
+        protected Dictionary<string, string>? Values;
 
         /// <summary>
-        /// Get a named value from this token.
+        /// Get a named _value from this token.
         /// </summary>
-        /// <param name="key">name of the value</param>
-        /// <returns>text version from the stream of this value</returns>
-        public string GetValue(string key)
+        /// <param name="key">name of the _value</param>
+        /// <returns>text version from the stream of this _value</returns>
+        public string? GetValue(string key)
         {
-            if ((Values == null) || !Values.TryGetValue(key, out string result)) result = null;
+            if ((Values is null) || !Values.TryGetValue(key, out string? result)) result = null;
             return result;
         }
 
         /// <summary>
         /// Buffer for ToString(). Do not use this variable, it assumed to be local static to ToString().
         /// </summary>
-        string _tostring = null;
+        string? _tostring = null;
 
         /// <summary>
         /// Readable text representation of this token.
         /// </summary>
         /// <returns>Readable text representation.</returns>
-        public override string ToString()
+        public override string? ToString()
         {
-            if (_tostring == null)
+            if (_tostring is null)
             {
-                StringBuilder sb = new StringBuilder();
-                if ((int)State != (int)Scanner._State.NORMAL)
+                StringBuilder sb = new();
+                if ((int)ScannerState != (int)Scanner.ScannerState.NORMAL)
                 {
-                    sb.Append("<");
-                    sb.Append(State.ToString());
-                    sb.Append(">");
+                    sb.Append('<');
+                    sb.Append(ScannerState.ToString());
+                    sb.Append('>');
                 }
                 sb.Append("(Id='");
                 sb.Append(Symbol.ToString());

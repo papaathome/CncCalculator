@@ -20,13 +20,14 @@
         {
             switch (me)
             {
-                case UnitConstant.c:     return 1.0; // constant ([#], 1) = dimentionless constant.
+                case UnitConstant.c: return 1.0; // constant ([#], 1) = dimentionless constant.
                 case UnitConstant.tooth: return 1.0; // constant ([tooth], 1) = named dimentionless constant.
-            }
+                default:
 #if USE_LOG4NET
-            log.Debug($"Constants: type not recognised: '(UnitConstant)0x{(ulong)me:x16}'");
+                    log.Debug($"Constants: type not recognised: '(UnitConstant)0x{(ulong)me:x16}'");
 #endif
-            return 0.0;
+                    return 0.0;
+            }
         }
 
         static public Unit Base(this UnitConstant me)
@@ -34,32 +35,36 @@
             return BASE;
         }
 
-        static public string ToString(this UnitConstant me, bool append_brackets)
+        static public string ToString(
+            this UnitConstant me,
+            bool append_brackets)
         {
             switch (me)
             {
-                case UnitConstant.c:     return (append_brackets) ? "[#]" : "#";
+                case UnitConstant.c: return (append_brackets) ? "[#]" : "#";
                 case UnitConstant.tooth: return (append_brackets) ? "[tooth]" : "tooth";
-            }
-            var msg = "(UnitConstant)0x{(ulong)me:x16}";
+                default:
+                    var msg = "(UnitConstant)0x{(ulong)me:x16}";
 #if USE_LOG4NET
-            log.Debug($"Constants: type not recognised: '{msg}'");
+                    log.Debug($"Constants: type not recognised: '{msg}'");
 #endif
-            return (append_brackets) ? $"[{msg}]" : msg;
+                    return (append_brackets) ? $"[{msg}]" : msg;
+            }
         }
 
         static public string Description(this UnitConstant me)
         {
             switch (me)
             {
-                case UnitConstant.c:     return "constant: dimentionless constant, [#]";
+                case UnitConstant.c: return "constant: dimentionless constant, [#]";
                 case UnitConstant.tooth: return "tooth: named dimentionless constant, [tooth]";
-            }
-            var msg = $"(UnitConstant)0x{(ulong)me:x16}";
+                default:
+                    var msg = $"(UnitConstant)0x{(ulong)me:x16}";
 #if USE_LOG4NET
-            log.Debug($"Constant: type not recognised: '{msg}'");
+                    log.Debug($"Constant: type not recognised: '{msg}'");
 #endif
-            return $"Constant: dimentionless constant [{msg}]";
+                    return $"Constant: dimentionless constant [{msg}]";
+            }
         }
 
         static public bool TryParse(string value, out Unit unit)
@@ -68,9 +73,8 @@
             {
                 case "#":     unit = Unit.c; return true;
                 case "tooth": unit = Unit.tooth; return true;
+                default:      unit = BASE; return false;
             }
-            unit = BASE;
-            return false;
         }
     }
 }

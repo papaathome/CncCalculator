@@ -1,5 +1,4 @@
-﻿using System.IO;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 
 using As.Tools.Data.Scanners;
 
@@ -14,12 +13,12 @@ namespace As.Tools.Data.Scales
             /// <summary>
             /// The error state.
             /// </summary>
-            ERROR = _State.ERROR,
+            ERROR = ScannerState.ERROR,
 
             /// <summary>
             /// SOF . '...' EOF ; the normal state.
             /// </summary>
-            NORMAL = _State.NORMAL,
+            NORMAL = ScannerState.NORMAL,
 
             /// <summary>
             /// Predefined function names not active.
@@ -36,82 +35,76 @@ namespace As.Tools.Data.Scales
         //override public object TokenEOL => TokenId._EOL_;
         //override public object TokenComment => TokenId._COMMENT_;
 
-        public ScaleScanner(IProgressBar progressbar = null) : base(progressbar)
-        {
-            BuildRegex();
-        }
+        public ScaleScanner(IProgressBar? progressbar = null) : base(progressbar) { }
 
-        public ScaleScanner(string path, IProgressBar progressbar) : base(path, progressbar)
-        {
-            BuildRegex();
-        }
+        public ScaleScanner(string path, IProgressBar progressbar) : base(path, progressbar) { }
 
-        public ScaleScanner(string buffer) : base(buffer)
-        {
-            BuildRegex();
-        }
+        public ScaleScanner(string buffer) : base(buffer) { }
 
-        public ScaleScanner(StreamReader input, IProgressBar progressbar) : base(input, progressbar)
-        {
-            BuildRegex();
-        }
+        public ScaleScanner(StreamReader input, IProgressBar progressbar) : base(input, progressbar) { }
 
-        Regex NAME;
-        Regex INT;
+        readonly Regex NAME = TokenId.NAME.Regex(REGEX_OPTIONS);
+        readonly Regex INT = TokenId.INT.Regex(REGEX_OPTIONS);
 
-        void BuildRegex()
-        {
-            NAME = TokenId.NAME.Regex(REGEX_OPTIONS);
-            INT  = TokenId.INT.Regex(REGEX_OPTIONS);
-        }
-
-        protected override void Scan(ref Token result)
+        protected override void Scan(out Token result)
         {
             switch (State)
             {
                 case States.NORMAL:
-                    switch (buffer[column])
+                    if ((Buffer == null) || (Buffer.Length <= Column)) goto case States.ERROR;
+                    switch (Buffer[Column])
                     {
-                        case '[': SetSymbol(TokenId.BRACKET_OPEN, ref result); break;
-                        case ']': SetSymbol(TokenId.BRACKET_CLOSE, ref result); break;
-                        case '(': SetSymbol(TokenId.PARENTESES_OPEN, ref result); break;
-                        case ')': SetSymbol(TokenId.PARENTESES_CLOSE, ref result); break;
-                        case '^': SetSymbol(TokenId.PWR, ref result); break;
-                        case '/': SetSymbol(TokenId.DIV, ref result); break;
-                        case '#': SetSymbol(TokenId.NAME, ref result, "#"); break;
+                        case '[': SetSymbol(TokenId.BRACKET_OPEN, out result); break;
+                        case ']': SetSymbol(TokenId.BRACKET_CLOSE, out result); break;
+                        case '(': SetSymbol(TokenId.PARENTESES_OPEN, out result); break;
+                        case ')': SetSymbol(TokenId.PARENTESES_CLOSE, out result); break;
+                        case '^': SetSymbol(TokenId.PWR, out result); break;
+                        case '/': SetSymbol(TokenId.DIV, out result); break;
+                        case '#': SetSymbol(TokenId.NAME, out result, "#"); break;
                         default:
-                            if (CheckSymbol(TokenId.INT, INT, ref result)) break;
-                            CheckSymbol(TokenId.NAME, NAME, ref result);
+                            if (TryGetSymbol(TokenId.INT, INT, out Token? r))
+                            {
+                                result = r!;
+                                break;
+                            }
+                            if (TryGetSymbol(TokenId.NAME, NAME, out r))
+                            {
+                                result = r!;
+                                break;
+                            }
+                            result = new ScannerToken(State, TokenId._ERROR_, Position, "Scanner no token available.");
+                            SetState((int)States.ERROR);
                             break;
                     }
                     break;
                 case States.ERROR:
-                    result = new TokenScanner(State, TokenId._ERROR_, Position, "Scanner no token recognised.");
+                    result = new ScannerToken(State, TokenId._ERROR_, Position, "Scanner no token recognised.");
                     break;
                 default:
-                    result = new TokenScanner(State, TokenId._ERROR_, Position, $"Scanner state not recognised: {State}");
+                    result = new ScannerToken(State, TokenId._ERROR_, Position, $"Scanner state not recognised: {State}");
                     SetState((int)States.ERROR);
                     break;
             }
         }
 
-        void SetSymbol(TokenId symbol, ref Token output, string value = null)
+        void SetSymbol(TokenId symbol, out Token output, string? value = null)
         {
-            output = new TokenScanner(State, symbol, Position, value);
-            column += symbol.Text(as_symbol: true).Length;
+            output = new ScannerToken(State, symbol, Position, value);
+            Column += symbol.Text(as_symbol: true).Length;
         }
 
-        bool CheckSymbol(TokenId sysmbol, Regex re, ref Token output)
+        bool TryGetSymbol(TokenId sysmbol, Regex re, out Token? output)
         {
-            Match match;
-            var result = (match = re.Match(buffer, column)).Success;
-            if (result)
+            Match? match = null;
+            if ((Buffer != null) && (Column < Buffer.Length)) match = re.Match(Buffer, Column);
+            if (match?.Success ?? false)
             {
                 var value = match.Groups["text"].Value;
-                output = new TokenScanner(State, sysmbol, Position, value);
-                column += value.Length;
+                output = new ScannerToken(State, sysmbol, Position, value);
+                Column += value.Length;
             }
-            return result;
+            else output = null;
+            return (output != null);
         }
     }
 }

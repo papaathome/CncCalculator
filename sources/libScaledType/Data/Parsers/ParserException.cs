@@ -1,6 +1,4 @@
-﻿using System;
-using System.Runtime.Serialization;
-using System.Security.Permissions;
+﻿using System.Runtime.Serialization;
 
 namespace As.Tools.Data.Parsers
 {
@@ -110,59 +108,6 @@ namespace As.Tools.Data.Parsers
         }
 
         /// <summary>
-        /// Serialised exception.
-        /// </summary>
-        /// <param name="token">token context</param>
-        /// <param name="info">Serialised information</param>
-        /// <param name="context">Streaming context.</param>
-        [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
-        public ParserException(object token, SerializationInfo info, StreamingContext context) : base(info, context)
-        {
-            this.token = token?.ToString();
-            this.stack = null;
-        }
-
-        /// <summary>
-        /// Serialised exception.
-        /// </summary>
-        /// <param name="stack">frame stack context</param>
-        /// <param name="token">token context</param>
-        /// <param name="info">Serialised information</param>
-        /// <param name="context">Streaming context.</param>
-        [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
-        public ParserException(object stack, object token, SerializationInfo info, StreamingContext context) : base(info, context)
-        {
-            this.token = token?.ToString();
-            this.stack = stack?.ToString();
-        }
-
-        /// <summary>
-        /// Serialised exception.
-        /// </summary>
-        /// <param name="info">Serialised information</param>
-        /// <param name="context">Streaming context.</param>
-        [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
-        protected ParserException(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
-            token = info.GetString("token");
-            stack = info.GetString("stack");
-        }
-
-        /// <summary>
-        /// Serialised exception.
-        /// </summary>
-        /// <param name="info">Serialised information</param>
-        /// <param name="context">Streaming context.</param>
-        [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            if (info == null) throw new ArgumentNullException("info");
-            info.AddValue("token", token);
-            info.AddValue("stack", stack);
-            base.GetObjectData(info, context);
-        }
-
-        /// <summary>
         /// Exception message
         /// </summary>
         public override string Message
@@ -187,12 +132,12 @@ namespace As.Tools.Data.Parsers
         /// <summary>
         /// Readable text representation of the token context.
         /// </summary>
-        public readonly string token;
+        public readonly string? token;
 
         /// <summary>
         /// Readable text representation of the frame stack context.
         /// </summary>
-        public readonly string stack;
+        public readonly string? stack;
 
         public override string ToString()
         {

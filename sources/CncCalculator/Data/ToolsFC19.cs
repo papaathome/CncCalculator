@@ -1,94 +1,130 @@
-﻿using System.Collections.Generic;
+﻿#define USE_LOG4NET
+
 using System.IO;
-using System;
+
+using As.Applications.Data.Json;
 
 using Newtonsoft.Json;
-using As.Tools.Data.Json;
 
-namespace As.Apps.Data
+namespace As.Applications.Data
 {
-    public class Bit : JsonBase<Bit>
+    public class Tool : JsonBase<Tool>
     {
+        public override string ToString()
+        {
+            return string.IsNullOrWhiteSpace(Name) ? "<<no name>>" : Name;
+        }
+
         [JsonProperty("version")]
         public int Version { get; set; }
 
         [JsonProperty("name")]
-        public string Name { get; set; }
+        public string Name { get; set; } = "";
 
         [JsonProperty("shape")]
-        public string Shape { get; set; }
+        public string Shape { get; set; } = "";
 
         [JsonProperty("parameter")]
-        public Dictionary<string, string> Parameter { get; set; }
+        public Dictionary<string, string> Parameter { get; set; } = [];
 
         [JsonProperty("attribute")]
-        public Dictionary<string, string> Attribute { get; set; }
+        public Dictionary<string, string> Attribute { get; set; } = [];
     }
 
-    public class Tool
+    public class ToolReference
     {
         [JsonProperty("nr")]
-        public string Nr { get; set; }
+        public string Nr { get; set; } = "";
 
         [JsonProperty("path")]
-        public string Path { get; set; }
+        public string Path { get; set; } = "";
     }
 
     public class ToolsList
     {
 #if USE_LOG4NET
-        protected static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        protected static readonly log4net.ILog Log
+            = log4net.LogManager.GetLogger(nameof(ToolsList));
 #endif
 
-        public static ToolsList GetData(string path, bool read_bits = true, JsonSerializerSettings jsonSettings = null)
+        public static ToolsList? GetData(
+            string path,
+            bool read_bits = true,
+            JsonSerializerSettings? jsonSettings = null)
         {
-            string p = null;
+            string p = "";
             if (read_bits)
             {
-                p = Path.Combine(Path.GetDirectoryName(Path.GetDirectoryName(path)), "Bit");
+                var d = Path.GetDirectoryName(
+                    Path.GetDirectoryName(path)) ?? ".";
+                p = Path.Combine(d, "Bit");
             }
-            using (var sr = new StreamReader(path)) return GetData(sr, p, jsonSettings);
+            using var sr = new StreamReader(path);
+            return GetData(sr, p, jsonSettings);
         }
 
-        public static ToolsList GetData(string path, string bits_path, JsonSerializerSettings jsonSettings = null)
+        public static ToolsList? GetData(
+            string path,
+            string bits_path,
+            JsonSerializerSettings? jsonSettings = null)
         {
-            using (var sr = new StreamReader(path)) return GetData(sr, bits_path, jsonSettings);
+            if (!File.Exists(path)) return null;
+            using var sr = new StreamReader(path);
+            return GetData(sr, bits_path, jsonSettings);
         }
 
-        public static ToolsList GetData(StreamReader sr, string bits_path = null, JsonSerializerSettings jsonSettings = null)
+        public static ToolsList? GetData(
+            StreamReader sr,
+            string bits_path = "",
+            JsonSerializerSettings? jsonSettings = null)
         {
             var result = Deserialise(sr.ReadToEnd(), jsonSettings);
+            if (result == null) return null;
+
             if (!string.IsNullOrWhiteSpace(bits_path))
             {
-                foreach (var t in result.Tools)
+                foreach (var t in result.ListOfToolReferences)
                 {
                     string p = string.Empty;
                     try
                     {
                         p = Path.Combine(bits_path, t.Path);
-                        var b = Bit.GetData(p);
-                        result.Bits.Add(t.Nr, b);
+                        var b = Tool.GetData(p);
+                        if (b != null) result.Tools.Add(t.Nr, b);
                     }
+#if USE_LOG4NET
                     catch (Exception x)
                     {
-                        log.Debug($"ToolsList: parsing: '{p}'; problem: {x} ");
+                        Log.ErrorFormat($"ToolsList: {x.Message.Trim()}; path = \"{p}\"");
+                        for (
+                            var i = x.InnerException;
+                            i != null;
+                            i = i.InnerException)
+                        {
+                            Log.ErrorFormat($"ToolsList: {x.Message.Trim()}");
+                        }
                     }
+#else
+                    catch { }
+#endif
                 }
             }
             return result;
         }
 
-        public static ToolsList Deserialise(string value, JsonSerializerSettings jsonSettings = null)
+        public static ToolsList? Deserialise(
+            string value,
+            JsonSerializerSettings? jsonSettings = null)
         {
             return Jtransform<ToolsList>.DeserializeObject(value, jsonSettings);
         }
 
         [JsonProperty("tools")]
-        public List<Tool> Tools { get; set; }
+        public List<ToolReference> ListOfToolReferences { get; set; } = [];
 
         [JsonProperty("version")]
         public int Version { get; set; }
 
-        public Dictionary<string, Bit> Bits { get; set; } = new Dictionary<string, Bit>();
+        public Dictionary<string, Tool> Tools { get; set; } = [];
     }
 }

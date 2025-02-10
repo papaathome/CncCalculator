@@ -1,0 +1,123 @@
+﻿<UserControl x:Class="As.Applications.Views.FeedAndSpeedView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:As.Applications.Views"
+             xmlns:viewmodels="clr-namespace:As.Applications.ViewModels"
+             d:DataContext="{d:DesignInstance Type=viewmodels:FeedAndSpeedViewModel}"
+             mc:Ignorable="d" 
+             d:DesignWidth="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="*" MinWidth="60" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="*" MinWidth="60" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Margin="12,3,3,3" VerticalAlignment="Center" HorizontalAlignment="Right" >Tool</TextBlock>
+            <ComboBox
+                Grid.Column="1" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Stretch"
+                IsReadOnly="true"
+                ItemsSource="{Binding Tools}"
+                DisplayMemberPath="Value"
+                SelectedValuePath="Key"
+                SelectedValue="{Binding ToolSelected, Mode=TwoWay, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBlock Grid.Column="2" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Right" >Material</TextBlock>
+            <ComboBox
+                Grid.Column="3" Margin="3,3,12,3" VerticalAlignment="Center" HorizontalAlignment="Stretch"
+                IsReadOnly="true"
+                ItemsSource="{Binding Materials}"
+                DisplayMemberPath="Value"
+                SelectedValuePath="Key"
+                SelectedValue="{Binding MaterialSelected, Mode=TwoWay, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" />
+        </Grid>
+        <GroupBox Grid.Row="1" Margin="3" Header="Tool">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" MinHeight="24" />
+                    <RowDefinition Height="auto" MinHeight="24" />
+                    <RowDefinition Height="auto" MinHeight="24" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="85" />
+                    <ColumnDefinition Width="20" />
+                    <ColumnDefinition Width="*" MinWidth="110" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Row="0" Grid.Column="0" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Left" >Cutting depth</TextBlock>
+                <TextBlock Grid.Row="1" Grid.Column="0" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Left" >Diameter</TextBlock>
+                <TextBlock Grid.Row="2" Grid.Column="0" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Left" >Flutes</TextBlock>
+
+                <local:DoubleSTView Grid.Row="0" Grid.Column="2" DataContext="{Binding CuttingDepth}"/>
+                <local:DoubleSTView Grid.Row="1" Grid.Column="2" DataContext="{Binding Diameter}"/>
+                <local:LongSTView Grid.Row="2" Grid.Column="2" DataContext="{Binding Flutes}"/>
+            </Grid>
+        </GroupBox>
+        <GroupBox Grid.Row="2" Margin="3" Header="Material">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" MinHeight="24" />
+                    <RowDefinition Height="auto" MinHeight="24" />
+                    <RowDefinition Height="auto" MinHeight="24" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="85" />
+                    <ColumnDefinition Width="20" />
+                    <ColumnDefinition Width="*" MinWidth="110" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Row="0" Grid.Column="0" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Left" >Cutting speed</TextBlock>
+                <TextBlock Grid.Row="1" Grid.Column="0" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Left" >Spindle speed</TextBlock>
+                <TextBlock Grid.Row="2" Grid.Column="0" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Left" >Feed per tooth</TextBlock>
+
+                <RadioButton
+                    Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left"
+                    IsChecked="{
+                        Binding IsMaterialCuttingSpeedPrimary,
+                        UpdateSourceTrigger=LostFocus,
+                        ValidatesOnDataErrors=true,
+                        NotifyOnValidationError=true
+                    }"/>
+                <RadioButton
+                    Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left"
+                    IsChecked="{
+                        Binding IsMaterialSpindleSpeedPrimary,
+                        UpdateSourceTrigger=LostFocus,
+                        ValidatesOnDataErrors=true,
+                        NotifyOnValidationError=true
+                    }"/>
+
+                <local:DoubleSTView Grid.Row="0" Grid.Column="2" DataContext="{Binding MaterialCuttingSpeed}"/>
+                <local:DoubleSTView Grid.Row="1" Grid.Column="2" DataContext="{Binding MaterialSpindleSpeed}"/>
+                <local:DoubleSTView Grid.Row="2" Grid.Column="2" DataContext="{Binding MaterialFeedPerTooth}"/>
+            </Grid>
+        </GroupBox>
+        <GroupBox Grid.Row="3" Margin="3" Header="Feeds and Speeds">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" MinHeight="24" />
+                    <RowDefinition Height="auto" MinHeight="24" />
+                    <RowDefinition Height="auto" MinHeight="24" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="85" />
+                    <ColumnDefinition Width="20" />
+                    <ColumnDefinition Width="*" MinWidth="110" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Row="0" Grid.Column="0" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Left" >Cutting speed</TextBlock>
+                <TextBlock Grid.Row="1" Grid.Column="0" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Left" >Spindle speed</TextBlock>
+                <TextBlock Grid.Row="2" Grid.Column="0" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Left" >Feed</TextBlock>
+
+                <local:DoubleSTView Grid.Row="0" Grid.Column="2" DataContext="{Binding CuttingSpeed}"/>
+                <local:DoubleSTView Grid.Row="1" Grid.Column="2" DataContext="{Binding SpindleSpeed}"/>
+                <local:DoubleSTView Grid.Row="2" Grid.Column="2" DataContext="{Binding Feed}"/>
+            </Grid>
+        </GroupBox>
+    </Grid>
+</UserControl>

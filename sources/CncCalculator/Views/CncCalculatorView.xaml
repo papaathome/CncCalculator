@@ -1,0 +1,41 @@
+﻿<Window
+    x:Class="As.Applications.Views.CncCalculatorView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:local="clr-namespace:As.Applications.Views"
+    xmlns:viewmodels="clr-namespace:As.Applications.ViewModels"
+    d:DataContext="{d:DesignInstance Type=viewmodels:CncCalculatorViewModel}"
+    mc:Ignorable="d"
+    Title="Cnc Calculator"
+    SizeToContent="Height" Width="480">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20" MaxHeight="20" />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+        <Menu Grid.Row="0" Margin="0" Grid.RowSpan="2">
+            <MenuItem>
+                <MenuItem.Header>File</MenuItem.Header>
+                <MenuItem Command="{Binding LoadToolsFile}">
+                    <MenuItem.Header>Load Tools...</MenuItem.Header>
+                </MenuItem>
+                <MenuItem Command="{Binding LoadMaterialsFile}">
+                    <MenuItem.Header>Load Materials...</MenuItem.Header>
+                </MenuItem>
+                <MenuItem Command="{Binding Exit}">
+                    <MenuItem.Header>Exit</MenuItem.Header>
+                </MenuItem>
+            </MenuItem>
+        </Menu>
+        <TabControl Grid.Row="1" Margin="3,3,3,3">
+            <TabItem Header="Feeds and Speeds" HorizontalAlignment="Stretch" VerticalAlignment="Top">
+                <local:FeedAndSpeedView DataContext="{Binding FeedAndSpeed}"/>
+            </TabItem>
+            <TabItem Header="Converter" HorizontalAlignment="Stretch">
+                <local:ConverterView DataContext="{Binding Converter}"/>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>

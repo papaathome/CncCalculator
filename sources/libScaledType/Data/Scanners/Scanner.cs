@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
-using System.Text;
+﻿using System.Text;
 
 namespace As.Tools.Data.Scanners
 {
@@ -17,9 +13,9 @@ namespace As.Tools.Data.Scanners
         protected const char NEWLINE = '\n';
 
         /// <summary>
-        /// Known parser states.
+        /// Known parser States.
         /// </summary>
-        public enum _State
+        public enum ScannerState
         {
             /// <summary>
             /// The normal state.
@@ -35,22 +31,23 @@ namespace As.Tools.Data.Scanners
         /// <summary>
         /// Token extended with scanner state details.
         /// </summary>
-        protected class TokenScanner : Token
+        protected class ScannerToken(
+            object state,
+            object id,
+            Position position,
+            string? value = null,
+            bool valueparts = false) :
+            Token(state, id, position, value, valueparts)
         {
-            public TokenScanner(object state, object id, Position position, string value=null, bool valueparts=false)
-                : base(state, id, position, value, valueparts)
-            { }
-
             /// <summary>
-            /// Assign a value to an token attribute.
+            /// Assign a _value to an token attribute.
             /// </summary>
             /// <param name="key"></param>
             /// <param name="value"></param>
             public void SetValue(string key, string value)
             {
                 if (Values == null) throw new AggregateException("Token without Values list");
-                if (Values.ContainsKey(key)) Values[key] = value;
-                else Values.Add(key, value);
+                if (!Values.TryAdd(key, value)) Values[key] = value;
             }
         }
 
@@ -58,26 +55,41 @@ namespace As.Tools.Data.Scanners
         /// Base class constructor for scanners.
         /// </summary>
         /// <param name="log">hook to give feedback on progress and problems.</param>
-        protected Scanner(IProgressBar progressbar)
+        protected Scanner(IProgressBar? progressbar)
         {
-            buffer = null;
-            states = new Stack<object>();
-            lookahead = null;
+            Buffer = null;
+            States = new Stack<object>();
+            Lookahead = null;
 
             FileName = null;
-            fs = null;
-            input = null;
+            FileStream = null;
+            InputStream = null;
 
-            this.progressbar = progressbar;
-            tryUseProgress = (progressbar != null);
+            this.ProgressBar = progressbar;
+            tryUseProgress = (progressbar is not null);
 
-            IncludeNewlines = false; // add newlines to the buffer.
+            IncludeNewlines = false; // add newlines to the Buffer.
             ScanNewlines = false; // treat newline as whitespace.
             ScanWhitespace = false; // treat whitespace not as a token.
         }
 
-        protected Scanner() : this((IProgressBar)null)
-        { }
+        protected Scanner()
+        {
+            Buffer = null;
+            States = new Stack<object>();
+            Lookahead = null;
+
+            FileName = null;
+            FileStream = null;
+            InputStream = null;
+
+            ProgressBar = null;
+            tryUseProgress = false;
+
+            IncludeNewlines = false; // false: add no newlines to the Buffer.
+            ScanNewlines = false; // false: treat newline as whitespace.
+            ScanWhitespace = false; // false: treat whitespace not as a token.
+        }
 
         /// <summary>
         /// Initialise the scanner. (Read from file version)
@@ -85,14 +97,14 @@ namespace As.Tools.Data.Scanners
         /// <param name="path">Path to text file</param>
         /// <param name="progressbar">Progress bar</param>
         /// <param name="log">hook to give feedback on progress and problems.</param>
-        /// <remarks>When path==null: use Initialise(StreamReader) to set the input stream</remarks>
+        /// <remarks>When path==null: use Initialise(StreamReader) to set the InputStream stream</remarks>
         protected Scanner(string path, IProgressBar progressbar) : this(progressbar)
         {
             if (path != null) Initialise(path);
         }
 
         /// <summary>
-        /// Initialise the scanner. (read from buffer version)
+        /// Initialise the scanner. (read from Buffer version)
         /// </summary>
         /// <param name="buffer">Text to parse</param>
         /// <param name="log">hook to give feedback on progress and problems.</param>
@@ -109,7 +121,7 @@ namespace As.Tools.Data.Scanners
         /// <summary>
         /// Initialise the scanner. (read from stream version)
         /// </summary>
-        /// <param name="input">input stream to use</param>
+        /// <param name="input">InputStream stream to use</param>
         /// <param name="log">hook to give feedback on progress and problems.</param>
         protected Scanner(StreamReader input, IProgressBar progressbar) : this(progressbar)
         {
@@ -132,29 +144,29 @@ namespace As.Tools.Data.Scanners
         /// <summary>
         /// On all subsequent moments use the progress bar.
         /// </summary>
-        bool useProgress;
+        bool UseProgress;
 
         /// <summary>
         /// Instance that takes the progress data
         /// </summary>
-        IProgressBar progressbar;
+        readonly IProgressBar? ProgressBar;
 
         /// <summary>
         /// Scanner state stack
         /// </summary>
-        Stack<object> states;
+        readonly Stack<object> States;
 
         /// <summary>
         /// Current scanner state
         /// </summary>
         protected object State
         {
-            get { return (states.Count == 0) ? StateNormal : states.Peek(); }
+            get { return (States.Count == 0) ? StateNormal : States.Peek(); }
             private set
             {
                 if (State != value)
                 {
-                    if (states.Count > 0) states.Pop();
+                    if (States.Count > 0) States.Pop();
                     PushState(value);
                     RetensionInput();
                 }
@@ -164,10 +176,10 @@ namespace As.Tools.Data.Scanners
         protected abstract object StateNormal { get; }
         protected abstract object StateError { get; }
 
-        public virtual object TokenEOL { get { return _TokenId._EOL_; } }
-        public virtual object TokenEOT { get { return _TokenId._EOT_; } }
-        public virtual object TokenError { get { return _TokenId._ERROR_; } }
-        public virtual object TokenComment {  get { return _TokenId._COMMENT_; } }
+        public virtual object TokenEOL { get { return TokenIdBase._EOL_; } }
+        public virtual object TokenEOT { get { return TokenIdBase._EOT_; } }
+        public virtual object TokenError { get { return TokenIdBase._ERROR_; } }
+        public virtual object TokenComment {  get { return TokenIdBase._COMMENT_; } }
 
         /// <summary>
         /// Inform caller about the current scanner state
@@ -182,7 +194,7 @@ namespace As.Tools.Data.Scanners
         public void SetState(object value) { State = value; }
 
         /// <summary>
-        /// Include newlines in buffer.
+        /// Include newlines in Buffer.
         /// </summary>
         public bool IncludeNewlines { get; set; }
 
@@ -202,7 +214,7 @@ namespace As.Tools.Data.Scanners
         /// <param name="value">New scanner state</param>
         public void PushState(object value)
         {
-            states.Push(value);
+            States.Push(value);
             RetensionInput();
         }
 
@@ -211,108 +223,108 @@ namespace As.Tools.Data.Scanners
         /// </summary>
         public void PopState()
         {
-            if (states.Count > 0)
+            if (States.Count > 0)
             {
-                states.Pop();
+                States.Pop();
                 RetensionInput();
             }
         }
 
         /// <summary>
-        /// Reset input pointer, clear lookahead buffer, rebuild current context.
+        /// Reset InputStream pointer, clear Lookahead Buffer, rebuild current context.
         /// </summary>
         void RetensionInput()
         {
-            if (lookahead != null)
+            if (Lookahead != null)
             {
-                Token token = lookahead;
-                lookahead = null;
-                if (token.Position.offset != offset)
+                Token token = Lookahead;
+                Lookahead = null;
+                if (token.Position.Offset != Offset)
                 {
-                    SetPosition(token.Position.offset, SeekOrigin.Begin);
-                    column = buffer.Length;
-                    line = token.Position.line;
+                    SetPosition(token.Position.Offset, SeekOrigin.Begin);
+                    Column = Buffer?.Length ?? 0;
+                    Line = token.Position.Line;
                     Fetch();
                 }
-                column = token.Position.column;
+                Column = token.Position.Column;
             }
         }
 
         /// <summary>
-        /// Input file if reading from file
+        /// InputStream file if reading from file
         /// </summary>
-        FileStream fs;
+        FileStream? FileStream;
 
         /// <summary>
-        /// File name associated with the input file
+        /// File name associated with the InputStream file
         /// </summary>
-        public string FileName { get; set; }
+        public string? FileName { get; set; } = null;
 
         /// <summary>
-        /// Input stream if reading from file or stream
+        /// InputStream stream if reading from file or stream
         /// </summary>
-        StreamReader input;
+        StreamReader? InputStream = null;
 
         /// <summary>
-        /// Current offset in input stream.
+        /// Current Offset in InputStream stream.
         /// </summary>
-        protected long offset;
+        protected long Offset;
 
         /// <summary>
-        /// Current line number, starting from 1
+        /// Current Line number, starting from 1
         /// </summary>
-        protected int line;
+        protected int Line;
 
         /// <summary>
-        /// Current column number, starting from 0
+        /// Current Column number, starting from 0
         /// </summary>
-        protected int column;
+        protected int Column;
 
         public Position Position
         {
-            get { return new Position(FileName, offset, line, column); }
+            get { return new Position(FileName, Offset, Line, Column); }
         }
 
         /// <summary>
-        /// Current line of text
+        /// Current Line of text
         /// </summary>
-        protected String buffer;
+        protected string? Buffer = null;
 
         /// <summary>
-        /// Peek lookahead buffer
+        /// Peek Lookahead Buffer
         /// </summary>
-        TokenScanner lookahead;
+        ScannerToken? Lookahead;
 
         /// <summary>
-        /// Initialise scanner with a new input stream
+        /// Initialise scanner with a new InputStream stream
         /// </summary>
-        /// <param name="input">input stream to use</param>
+        /// <param name="input">InputStream stream to use</param>
         public void Initialise(StreamReader input)
         {
             Close();
-            this.input = input;
+            this.InputStream = input;
             State = StateNormal;
         }
 
         /// <summary>
         /// Initialse scanner with a new file to read
         /// </summary>
-        /// <param name="fileName">Name of the file to use as input stream</param>
+        /// <param name="fileName">Name of the file to use as InputStream stream</param>
         public void Initialise(string fileName)
         {
             Close();
             FileName = fileName;
-            useProgress = false;
+            UseProgress = false;
             if (tryUseProgress)
             {
                 try
                 {
-                    FileInfo fi = new FileInfo(fileName);
+                    FileInfo fi = new(fileName);
                     ulong len = (ulong)fi.Length;
                     if (len > 0)
                     {
-                        progressbar.SetProgressLoadMax(len);
-                        useProgress = true;
+                        ProgressBar?.SetProgressLoadMax(len);
+                        UseProgress = true;
                     }
                 }
                 catch (Exception) // x)
@@ -321,10 +333,10 @@ namespace As.Tools.Data.Scanners
                 }
             }
 
-            fs = new FileStream(FileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-            if (fs == null) throw new FileLoadException(string.Format("Cannot open file '{0}'", FileName));
-            input = new StreamReader(fs);
-            if (input == null) throw new FileLoadException(string.Format("Cannot open streamreader for '{0}'", FileName));
+            FileStream = new FileStream(FileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            if (FileStream == null) throw new FileLoadException(string.Format("Cannot open file '{0}'", FileName));
+            InputStream = new StreamReader(FileStream);
+            if (InputStream == null) throw new FileLoadException(string.Format("Cannot open streamreader for '{0}'", FileName));
             State = StateNormal;
         }
 
@@ -333,20 +345,20 @@ namespace As.Tools.Data.Scanners
         /// </summary>
         public void Close()
         {
-            if (input != null)
+            if (InputStream != null)
             {
-                input.Close();
-                input = null;
+                InputStream.Close();
+                InputStream = null;
             }
-            if (fs != null)
+            if (FileStream != null)
             {
-                fs.Close();
-                fs = null;
+                FileStream.Close();
+                FileStream = null;
             }
         }
 
         /// <summary>
-        /// Check buffer for a fixed text token.
+        /// Check Buffer for a fixed text token.
         /// </summary>
         /// <param name="value">Value to check for</param>
         /// <param name="ignore_case">true: do case insensitieve comparison.</param>
@@ -354,33 +366,33 @@ namespace As.Tools.Data.Scanners
         protected bool At(string value, bool ignore_case = true)
         {
             var len = value.Length;
-            var result = (column + len <= buffer.Length);
-            if (result) result = (string.Compare(buffer, column, value, 0, len, ignore_case) == 0);
+            var result = (Column + len <= (Buffer?.Length ?? 0));
+            if (result) result = (string.Compare(Buffer, Column, value, 0, len, ignore_case) == 0);
             return result;
         }
 
         /// <summary>
-        /// Look at the next token in the input stream.
+        /// Look at the next token in the InputStream stream.
         /// </summary>
-        /// <returns>The next token in the input stream</returns>
+        /// <returns>The next token in the InputStream stream</returns>
         public Token PeekToken()
         {
-            if (lookahead == null) lookahead = (TokenScanner)Scan();
-            return lookahead;
+            Lookahead ??= (ScannerToken)Scan();
+            return Lookahead;
         }
 
         /// <summary>
-        /// Consume the next token in de input stream.
+        /// Consume the next token in de InputStream stream.
         /// </summary>
-        /// <returns>The next token in the input stream.</returns>
+        /// <returns>The next token in the InputStream stream.</returns>
         public Token GetToken()
         {
             Token result;
-            if (lookahead == null) result = Scan();
+            if (Lookahead == null) result = Scan();
             else
             {
-                result = lookahead;
-                lookahead = null;
+                result = Lookahead;
+                Lookahead = null;
             }
             return result;
         }
@@ -388,29 +400,29 @@ namespace As.Tools.Data.Scanners
         /// <summary>
         /// Interface to scanner implementation.
         /// </summary>
-        /// <param name="result">The next token from the input stream (or null)</param>
-        protected abstract void Scan(ref Token result);
+        /// <param name="result">The next token from the InputStream stream (or null)</param>
+        protected abstract void Scan(out Token result);
 
         /// <summary>
-        /// Scan for the next token in the input stream.
+        /// Scan for the next token in the InputStream stream.
         /// </summary>
-        /// <returns>The next token in the input stream</returns>
+        /// <returns>The next token in the InputStream stream</returns>
         Token Scan()
         {
-            Token result = null;
+            Token result;
             do { Fetch(); } while (EatWhite());
-            if (buffer == null) result = new TokenScanner(State, TokenEOT, Position);
-            else Scan(ref result);
-            if (result == null)
+            if (Buffer is null) result = new ScannerToken(State, TokenEOT, Position);
+            else Scan(out result);
+            if (result is null)
             {
-                if (ScanNewlines && (buffer[column] == NEWLINE))
+                if (ScanNewlines && ((Buffer?[Column] ?? '\0') == NEWLINE))
                 {
-                    result = new TokenScanner(State, TokenEOT, Position);
-                    column++;
+                    result = new ScannerToken(State, TokenEOT, Position);
+                    Column++;
                 }
                 else
                 {
-                    result = new TokenScanner(State, TokenError, Position);
+                    result = new ScannerToken(State, TokenError, Position);
                     State = StateError;
                 }
             }
@@ -424,12 +436,12 @@ namespace As.Tools.Data.Scanners
         }
 
         // multiline scan with nesting.
-        protected Token ScanMultiline(object id, string delimiter_open, string delimiter_close, bool ignoreCase = false)
+        protected Token ScanMultiline(object id, string? delimiter_open, string delimiter_close, bool ignoreCase = false)
         {
-            Token result = null;
+            Token? result = null;
             if (string.IsNullOrEmpty(delimiter_close))
             {
-                result = new TokenScanner(State, id, Position);
+                result = new ScannerToken(State, id, Position);
             }
             else
             {
@@ -438,56 +450,72 @@ namespace As.Tools.Data.Scanners
                 var nests = 0;
                 var p = Position;
                 var value = new StringBuilder();
-                var start = column;
+                var start = Column;
                 do
                 {
-                    if (buffer.Length <= column)
+                    if
+                        (
+                            Buffer == null
+                        )
                     {
-                        if (start < column) value.Append(buffer.Substring(start));
-                        if (!IncludeNewlines) value.Append(NEWLINE);
-                        column = buffer.Length;
                         Fetch();
-                        if (buffer == null)
+                        if (Buffer is null)
                         {
-                            result = new TokenScanner(State, TokenError, p, $"Multiline token: In '{id}'...; found EOT before a closing delimiter '{delimiter_close}'");
+                            result = new ScannerToken(State, TokenError, p, $"Multiline token: In '{id}'...; found EOT before a closing delimiter '{delimiter_close}'");
                         }
                     }
-                    else if (
-                        (delimiter_open != null) &&
+                    else if
                         (
-                            !ignoreCase && (buffer[column] == delimiter_open[0]) ||
-                            ignoreCase && (char.ToUpperInvariant(buffer[column]) == char.ToUpperInvariant(delimiter_open[0]))
-                        ) &&
-                        (delimiter_open.Length <= buffer.Length - column) &&
-                        (string.Compare(buffer.Substring(column, delimiter_open.Length), delimiter_open, ignoreCase) == 0)
-                    )
+                            Buffer.Length <= Column
+                        )
+                    {
+                        if (start < Column) value.Append(Buffer.AsSpan(start));
+                        if (!IncludeNewlines) value.Append(NEWLINE);
+                        Column = Buffer.Length;
+                        Fetch();
+                        if (Buffer is null)
+                        {
+                            result = new ScannerToken(State, TokenError, p, $"Multiline token: In '{id}'...; found EOT before a closing delimiter '{delimiter_close}'");
+                        }
+                    }
+                    else if
+                        (
+                            (delimiter_open != null) &&
+                            (
+                                !ignoreCase && (Buffer[Column] == delimiter_open[0]) ||
+                                ignoreCase && (char.ToUpperInvariant(Buffer[Column]) == char.ToUpperInvariant(delimiter_open[0]))
+                            ) &&
+                            (delimiter_open.Length <= Buffer.Length - Column) &&
+                            (string.Compare(Buffer.Substring(Column, delimiter_open.Length), delimiter_open, ignoreCase) == 0)
+                        )
                     {
                         nests++;
-                        column += delimiter_open.Length;
+                        Column += delimiter_open.Length;
                     }
-                    else if (
+                    else if
                         (
-                            !ignoreCase && (buffer[column] == delimiter_close[0]) ||
-                            ignoreCase && (char.ToUpperInvariant(buffer[column]) == char.ToUpperInvariant(delimiter_close[0]))
-                        ) &&
-                        (delimiter_close.Length <= buffer.Length - column) &&
-                        (string.Compare(buffer.Substring(column, delimiter_close.Length), delimiter_close, ignoreCase) == 0)
-                    )
+                            (
+                                !ignoreCase && (Buffer[Column] == delimiter_close[0]) ||
+                                ignoreCase && (char.ToUpperInvariant(Buffer[Column]) == char.ToUpperInvariant(delimiter_close[0]))
+                            ) &&
+                            (delimiter_close.Length <= Buffer.Length - Column) &&
+                            (string.Compare(Buffer.Substring(Column, delimiter_close.Length), delimiter_close, ignoreCase) == 0)
+                        )
                     {
                         if (0 < nests)
                         {
                             nests--;
-                            column += delimiter_open.Length;
+                            Column += delimiter_open?.Length ?? 0;
                         }
                         else
                         {
-                            var l = column - start;
-                            if (0 < l) value.Append(buffer.Substring(start, l));
-                            column += delimiter_close.Length;
-                            result = new TokenScanner(State, id, p, value.ToString());
+                            var l = Column - start;
+                            if (0 < l) value.Append(Buffer.AsSpan(start, l));
+                            Column += delimiter_close.Length;
+                            result = new ScannerToken(State, id, p, value.ToString());
                         }
                     }
-                    else column++;
+                    else Column++;
                 }
                 while (result == null);
             }
@@ -495,19 +523,19 @@ namespace As.Tools.Data.Scanners
         }
 
         /// <summary>
-        /// Eat white space from current position in the buffer.
+        /// Eat white space from current position in the Buffer.
         /// </summary>
         /// <returns>True if the whitespace is at EOL, false otherwise.</returns>
         protected bool EatWhite()
         {
             if (ScanWhitespace) return false;
             bool result = false;
-            if (buffer != null)
+            if (Buffer is not null)
             {
-                int max = buffer.Length;
-                while (column < max)
+                int max = Buffer.Length;
+                while (Column < max)
                 {
-                    switch (buffer[column])
+                    switch (Buffer[Column])
                     {
                     case NEWLINE:
                         if (ScanNewlines) goto Done;
@@ -520,84 +548,95 @@ namespace As.Tools.Data.Scanners
                     //case '\x85':   elipsis. Not ECMAScript-compliant.
                     //case '\p{Z}':  Matches any separator character. Not ECMAScript-compliant and not in UNICODE character class.
                     EatWhite:
-                        column++;
+                        Column++;
                         break;
                     default:
                         goto Done;
                     }
                 }
             Done:
-                result = (max <= column);
+                result = (max <= Column);
             }
             return result;
         }
 
         /// <summary>
-        /// Refill the line buffer when the buffer is null and the steam is not empty or when the current index is at or past end of line.
+        /// Refill the Line Buffer when the Buffer is null and the steam is not empty or when the current index is at or past end of Line.
         /// </summary>
         protected void Fetch()
         {
-            if (input == null) buffer = null;
+            if (InputStream is null) Buffer = null;
             else if (
-                (buffer == null) && !input.EndOfStream ||
-                (buffer != null) && (buffer.Length <= column)
+                (Buffer is null) && !InputStream.EndOfStream ||
+                (Buffer is not null) && (Buffer.Length <= Column)
             )
             {
-                if (input.EndOfStream) buffer = null;
+                if (InputStream.EndOfStream) Buffer = null;
                 else
                 {
-                    offset = GetPosition();
-                    if (useProgress)
+                    Offset = GetPosition();
+                    if (UseProgress)
                     {
                         try
                         {
-                            progressbar.SetProgressLoad((ulong)offset);
+                            ProgressBar?.SetProgressLoad((ulong)Offset);
                         }
                         catch (Exception)
                         {
                             tryUseProgress = false;
                         }
                     }
-                    buffer = input.ReadLine();
-                    if (IncludeNewlines) buffer += $"{NEWLINE}";
-                    line++;
-                    column = 0;
+                    Buffer = InputStream.ReadLine();
+                    if (IncludeNewlines) Buffer += $"{NEWLINE}";
+                    Line++;
+                    Column = 0;
                 }
             }
         }
 
         /// <summary>
-        /// Get the current position from the input stream, corrected for the current line,=.
+        /// Get the current position from the InputStream stream, corrected for the current Line,=.
         /// </summary>
         /// <returns>Current position</returns>
         long GetPosition()
         {
-            if (input == null) return 0;
-            // The current buffer of decoded characters
-            char[] charBuffer = (char[])input.GetType().InvokeMember(
+            if (InputStream is null) return 0;
+
+#if false
+            // TODO: find workaround, this works in .NET Framework 4.8 but not in .NET 9
+
+            // The current Buffer of decoded characters
+            char[] charBuffer = (char[]?)InputStream.GetType().InvokeMember(
                 "charBuffer"
                 , BindingFlags.DeclaredOnly | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.GetField
-                , null, input, null
-            );
+                , null, InputStream, null
+            ) ?? [];
 
-            // The current position in the buffer of decoded characters
-            int charPos = (int)input.GetType().InvokeMember(
+            // The current position in the Buffer of decoded characters
+            int charPos = (int?)InputStream.GetType().InvokeMember(
                 "charPos"
                 , BindingFlags.DeclaredOnly | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.GetField
-                , null, input, null
-            );
+                , null, InputStream, null
+            ) ?? 0;
 
             // The number of bytes that the already-read characters need when encoded.
-            int numReadBytes = input.CurrentEncoding.GetByteCount(charBuffer, 0, charPos);
+            int numReadBytes = InputStream.CurrentEncoding.GetByteCount(charBuffer, 0, charPos);
 
-            // The number of encoded bytes that are in the current buffer
-            int byteLen = (int)input.GetType().InvokeMember(
+            // The number of encoded bytes that are in the current Buffer
+            int byteLen = (int?)InputStream.GetType().InvokeMember(
                 "byteLen"
                 , BindingFlags.DeclaredOnly | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.GetField
-                , null, input, null
-            );
+                , null, InputStream, null
+            ) ?? 0;
 
-            return input.BaseStream.Position - byteLen + numReadBytes;
+            return InputStream.BaseStream.Position - byteLen + numReadBytes;
+#else
+            if (!InputStream.BaseStream.CanSeek) return 0;
+
+            // TODO: correct current position for encoding and unused characters in the scanner buffer.
+
+            return InputStream.BaseStream.Position;
+#endif
         }
 
         /// <summary>
@@ -607,9 +646,9 @@ namespace As.Tools.Data.Scanners
         /// <param name="origin">Reference point of the position</param>
         void SetPosition(long offset, SeekOrigin origin)
         {
-            if (input == null) return;
-            input.BaseStream.Seek(offset, origin);
-            input.DiscardBufferedData();
+            if (InputStream == null) return;
+            InputStream.BaseStream.Seek(offset, origin);
+            InputStream.DiscardBufferedData();
         }
     }
 }

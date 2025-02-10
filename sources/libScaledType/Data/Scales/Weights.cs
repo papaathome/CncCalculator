@@ -27,7 +27,7 @@
             switch (me)
             {
                 case UnitWeight.kg: return UnitWeight.g.Factor() / 1000.0;       // kilogram [kg],  1000 g = 1 kg
-                case UnitWeight. g: return 1.0;                                  //      gram [g],     1 g = Standard unit of weight (mass)
+                case UnitWeight.g: return 1.0;                                  //      gram [g],     1 g = Standard unit of weight (mass)
 
                 // international yard and pound agreemend 1959.
                 case UnitWeight.st: return UnitWeight.lb.Factor() / 14.0;        //    stone [st],   14 lb = 1 st;
@@ -35,11 +35,12 @@
                 case UnitWeight.oz: return 16.0 * UnitWeight.lb.Factor();        //    ounce [oz],   16 oz = 1 lb
                 case UnitWeight.dr: return 16.0 * 16.0 * UnitWeight.lb.Factor(); //     dram [dr],   16 dr = 1 oz
                 case UnitWeight.gr: return 7000.0 * UnitWeight.lb.Factor();      //    grain [gr], 7000 gr = 1 lb
-            }
+                default:
 #if USE_LOG4NET
-            log.Debug($"Weight: type not recognised: '(UnitWeight)0x{(ulong)me:x16}'");
+                    log.Debug($"Weight: type not recognised: '(UnitWeight)0x{(ulong)me:x16}'");
 #endif
-            return 0.0;
+                    return 0.0;
+            }
         }
 
         static public Unit Base(this UnitWeight me)
@@ -52,19 +53,20 @@
             switch (me)
             {
                 case UnitWeight.kg: return (append_brackets) ? "[kg]" : "kg";
-                case UnitWeight. g: return (append_brackets) ? "[g]" : "g";
+                case UnitWeight.g: return (append_brackets) ? "[g]" : "g";
 
                 case UnitWeight.st: return (append_brackets) ? "[st]" : "st";
                 case UnitWeight.lb: return (append_brackets) ? "[lb]" : "lb";
                 case UnitWeight.oz: return (append_brackets) ? "[oz]" : "oz";
                 case UnitWeight.dr: return (append_brackets) ? "[dr]" : "dr";
                 case UnitWeight.gr: return (append_brackets) ? "[gr]" : "gr";
-            }
-            var msg = $"(UnitWeight)0x{(ulong)me:x16}";
+                default:
+                    var msg = $"(UnitWeight)0x{(ulong)me:x16}";
 #if USE_LOG4NET
-            log.Debug($"Weight: type not recognised: '{msg}'");
+                    log.Debug($"Weight: type not recognised: '{msg}'");
 #endif
-            return (append_brackets) ? $"[{msg}]" : msg;
+                    return (append_brackets) ? $"[{msg}]" : msg;
+            }
         }
 
         static public string Description(this UnitWeight me)
@@ -72,19 +74,20 @@
             switch (me)
             {
                 case UnitWeight.kg: return "kilogram: 1000 [g] = 1 [kg]";
-                case UnitWeight. g: return "gram: Standard unit of weight (mass), [g]";
+                case UnitWeight.g: return "gram: Standard unit of weight (mass), [g]";
 
                 case UnitWeight.st: return "stone: 1 [st] = 14 [lb]";
                 case UnitWeight.lb: return "(avoirdupois) pound: 1 [lb] = 0.45359237 [kg] (Int yard and pound agreemend 1959)";
                 case UnitWeight.oz: return "ounce: 16 [oz] 1 [lb]";
                 case UnitWeight.dr: return "dram: 256 [dr] = 16 [oz] = 1 [lb]";
                 case UnitWeight.gr: return "grain 7000 [gr] = 1 [lb]";
-            }
-            var msg = $"(UnitWeight)0x{(ulong)me:x16}";
+                default:
+                    var msg = $"(UnitWeight)0x{(ulong)me:x16}";
 #if USE_LOG4NET
-            log.Debug($"Weight: type not recognised: '{msg}'");
+                    log.Debug($"Weight: type not recognised: '{msg}'");
 #endif
-            return $"Weight: {msg}";
+                    return $"Weight: {msg}";
+            }
         }
 
         static public bool TryParse(string value, out Unit unit)
@@ -92,16 +95,15 @@
             switch (value.Trim())
             {
                 case "kg": unit = Unit.kg; return true;
-                case  "g": unit = Unit. g; return true;
+                case "g": unit = Unit.g; return true;
 
                 case "st": unit = Unit.st; return true;
                 case "lb": unit = Unit.lb; return true;
                 case "oz": unit = Unit.oz; return true;
                 case "dr": unit = Unit.dr; return true;
                 case "gr": unit = Unit.gr; return true;
+                default:   unit = BASE;    return false;
             }
-            unit = BASE;
-            return false;
         }
     }
 

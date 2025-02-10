@@ -1,59 +1,57 @@
-﻿using System;
-using System.IO;
-
-namespace As.Tools.Data.Scanners
+﻿namespace As.Tools.Data.Scanners
 {
     /// <summary>
-    /// Scanner position details for the start of a token.
+    /// Scanner details for the start position of a token.
     /// </summary>
-    public sealed class Position
+    /// <remarks>
+    /// Position in file, for internal use with the scanner providing information on location of problems.
+    /// </remarks>
+    /// <param name="filename">Name of file used as InputStream stream</param>
+    /// <param name="offset">Offset into the InputStream file to start of Line</param>
+    /// <param name="line">Line number of the Line with this position, counting from 1</param>
+    /// <param name="column">Column number within the Line with this position, counting from 0</param>
+    public sealed class Position(
+        string? filename,
+        long offset,
+        int line,
+        int column)
     {
         /// <summary>
-        /// Position, for internal use with the scanner providing information on location of problems.
+        /// Position in stream, for internal use with the scanner providing information on location of problems.
         /// </summary>
-        public Position(String filename, long offset, int line, int column)
-        {
-            this.line = line;
-            this.column = column;
-            this.offset = offset;
-            this.filename = filename;
-        }
+        /// <param name="line">Line number of the Line with this position, counting from 1</param>
+        /// <param name="column">Column number within the Line with this position, counting from 0</param>
+        public Position(int line, int column) : this("", -1, line, column) { }
 
         /// <summary>
-        /// Limited position, for internal use with the scanner providing information on location of problems.
+        /// Line number of the Line with this position, counting from 1.
         /// </summary>
-        public Position(int line, int column) : this(null, 0, line, column)
-        { }
+        public int Line { get; } = line;
 
         /// <summary>
-        /// Line number.
+        /// Column number within the Line with this position, counting from 0.
         /// </summary>
-        public readonly int line;
+        public int Column { get; } = column;
 
         /// <summary>
-        /// Column number on the current line.
+        /// Offset into the InputStream file to start of Line, unpositional streams use an Offset of -1.
         /// </summary>
-        public readonly int column;
+        public long Offset { get; } = offset;
 
         /// <summary>
-        /// Offset into the stream, start read position for the current token.
+        /// >Name of file used as InputStream stream.
         /// </summary>
-        public readonly long offset;
+        public string? FileName { get; } = filename;
 
         /// <summary>
-        /// Filename for the stream, null if stream is not associated with a file.
-        /// </summary>
-        public readonly String filename;
-
-        /// <summary>
-        /// Human readable representation of a position.
+        /// Readable representation of a position.
         /// </summary>
         /// <returns>Human readable representation of a position.</returns>
         override public string ToString()
         {
-            return (String.IsNullOrWhiteSpace(filename))
-                ? string.Format("(l={0}, c={1})", line, column + 1)
-                : string.Format("(f='{2}', l={0}, c={1})", line, column + 1, Path.GetFileName(filename));
+            return (string.IsNullOrWhiteSpace(FileName))
+                ? string.Format("(l={0}, c={1})", Line, Column + 1)
+                : string.Format("(f='{2}', l={0}, c={1})", Line, Column + 1, Path.GetFileName(FileName));
         }
     }
 }

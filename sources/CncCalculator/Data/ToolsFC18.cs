@@ -1,10 +1,8 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using As.Applications.Data.Json;
 
 using Newtonsoft.Json;
-using As.Tools.Data.Json;
 
-namespace As.Apps.Data
+namespace As.Applications.Data
 {
     class ToolFc18
     {
@@ -30,13 +28,13 @@ namespace As.Apps.Data
         public double LengthOffset { get; set; }
 
         [JsonProperty("material")]
-        public string Material { get; set; }
+        public string Material { get; set; } = "";
 
         [JsonProperty("name")]
-        public string Name { get; set; }
+        public string Name { get; set; } = "";
 
         [JsonProperty("tooltype")]
-        public string Tooltype { get; set; }
+        public string Tooltype { get; set; } = "";
     }
 
     class ToolsFc18 : JsonBase<ToolsFc18>
@@ -158,10 +156,10 @@ namespace As.Apps.Data
 ";
         #endregion
 
-        [JsonProperty("Version")]
+        [JsonProperty(nameof(Version))]
         public int Version { get; set; }
 
-        [JsonProperty("Tools")]
-        public Dictionary<string, ToolFc18> Tools { get; set; } = new Dictionary<string, ToolFc18>();
+        [JsonProperty(nameof(Tools))]
+        public Dictionary<string, ToolFc18> Tools { get; set; } = [];
     }
 }

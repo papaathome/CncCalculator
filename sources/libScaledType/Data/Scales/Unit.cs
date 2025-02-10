@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace As.Tools.Data.Scales
+﻿namespace As.Tools.Data.Scales
 {
     // all base units used are from the metric mgs system (meters, grams, seconds).
 
@@ -18,11 +16,11 @@ namespace As.Tools.Data.Scales
     //              = 10 [m*cm/m]
     //              = 10[cm]
     //
-    // Any expression of value * units will give a result in base units,
-    // be sure that your initial value is in the used units.
+    // Any expression of _value * units will give a result in base units,
+    // be sure that your initial _value is in the used units.
     //
     // Any expression of vaule / units will give a result in the units,
-    // be sure that your inital value in in base units.
+    // be sure that your inital _value in in base units.
     //
 
     /// <summary>
@@ -240,11 +238,12 @@ namespace As.Tools.Data.Scales
                 case BaseUnit.Weight:   return ((UnitWeight)me).Factor();
                 case BaseUnit.Time:     return ((UnitTime)me).Factor();
                 case BaseUnit.Rotation: return ((UnitRotation)me).Factor();
-            }
+                default:
 #if USE_LOG4NET
-            log.Debug($"Unit: type not recognised: '(Unit)0x{(ulong)me:x16}'");
+                    log.Debug($"Unit: type not recognised: '(Unit)0x{(ulong)me:x16}'");
 #endif
-            return 0.0;
+                    return 0.0;
+            }
         }
 
         /// <summary>
@@ -254,18 +253,19 @@ namespace As.Tools.Data.Scales
         /// <returns>Base unit for the unit type</returns>
         static public Unit Base(this Unit me)
         {
-            switch ( (BaseUnit)(((ulong)me) & (ulong)BaseUnit.Mask) )
+            switch ((BaseUnit)(((ulong)me) & (ulong)BaseUnit.Mask))
             {
                 case BaseUnit.Constant: return ((UnitConstant)me).Base();
-                case BaseUnit.Length:   return ((UnitLength)me).Base();
-                case BaseUnit.Weight:   return ((UnitWeight)me).Base();
-                case BaseUnit.Time:     return ((UnitTime)me).Base();
+                case BaseUnit.Length: return ((UnitLength)me).Base();
+                case BaseUnit.Weight: return ((UnitWeight)me).Base();
+                case BaseUnit.Time: return ((UnitTime)me).Base();
                 case BaseUnit.Rotation: return ((UnitRotation)me).Base();
-            }
+                default:
 #if USE_LOG4NET
-            log.Debug($"Unit: type not recognised: '(Unit)0x{(ulong)me:x16}'");
+                    log.Debug($"Unit: type not recognised: '(Unit)0x{(ulong)me:x16}'");
 #endif
-            throw new ArgumentException("Unit not recognised.", me.ToString());
+                    throw new ArgumentException("Unit not recognised.", me.ToString());
+            }
         }
 
         /// <summary>
@@ -275,19 +275,20 @@ namespace As.Tools.Data.Scales
         /// <returns>Human readable representation of the Unit type</returns>
         static public string ToString(this Unit me, bool append_brackets)
         {
-            switch ( (BaseUnit)((ulong)me & (ulong)BaseUnit.Mask) )
+            switch ((BaseUnit)((ulong)me & (ulong)BaseUnit.Mask))
             {
                 case BaseUnit.Constant: return ((UnitConstant)me).ToString(append_brackets);
-                case BaseUnit.Length:   return ((UnitLength)me).ToString(append_brackets);
-                case BaseUnit.Weight:   return ((UnitWeight)me).ToString(append_brackets);
-                case BaseUnit.Time:     return ((UnitTime)me).ToString(append_brackets);
+                case BaseUnit.Length: return ((UnitLength)me).ToString(append_brackets);
+                case BaseUnit.Weight: return ((UnitWeight)me).ToString(append_brackets);
+                case BaseUnit.Time: return ((UnitTime)me).ToString(append_brackets);
                 case BaseUnit.Rotation: return ((UnitRotation)me).ToString(append_brackets);
-            }
-            var msg = $"(Unit)0x{(ulong)me:x16}";
+                default:
+                    var msg = $"(Unit)0x{(ulong)me:x16}";
 #if USE_LOG4NET
-            log.Debug($"Unit: type not recognised: '{msg}'");
+                    log.Debug($"Unit: type not recognised: '{msg}'");
 #endif
-            return (append_brackets) ? $"[{msg}]" : msg;
+                    return (append_brackets) ? $"[{msg}]" : msg;
+            }
         }
 
         /// <summary>
@@ -297,19 +298,20 @@ namespace As.Tools.Data.Scales
         /// <returns>Short description of the Unit type</returns>
         static public string Description(this Unit me)
         {
-            switch ( (BaseUnit)(((ulong)me) & (ulong)BaseUnit.Mask) )
+            switch ((BaseUnit)(((ulong)me) & (ulong)BaseUnit.Mask))
             {
                 case BaseUnit.Constant: return ((UnitConstant)me).Description();
-                case BaseUnit.Length:   return ((UnitLength)me).Description();
-                case BaseUnit.Weight:   return ((UnitWeight)me).Description();
-                case BaseUnit.Time:     return ((UnitTime)me).Description();
+                case BaseUnit.Length: return ((UnitLength)me).Description();
+                case BaseUnit.Weight: return ((UnitWeight)me).Description();
+                case BaseUnit.Time: return ((UnitTime)me).Description();
                 case BaseUnit.Rotation: return ((UnitRotation)me).Description();
-            }
-            var msg = $"(Unit)0x{(ulong)me:x8}";
+                default:
+                    var msg = $"(Unit)0x{(ulong)me:x8}";
 #if USE_LOG4NET
-            log.Debug($"Unit: type not recognised: '{msg}'");
+                    log.Debug($"Unit: type not recognised: '{msg}'");
 #endif
-            return $"Unit: {msg}";
+                    return $"Unit: {msg}";
+            }
         }
     }
 }

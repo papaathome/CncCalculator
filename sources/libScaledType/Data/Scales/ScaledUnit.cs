@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace As.Tools.Data.Scales
+﻿namespace As.Tools.Data.Scales
 {
     /// <summary>
     /// ScaledUnit: (Unit, (int)Exponent)
@@ -13,23 +9,24 @@ namespace As.Tools.Data.Scales
     /// e.g.: a cubic foot in in [ft] * [ft] * [ft] = [ft^3] = (UnitLength.ft, 3)
     /// The ScaledUnit class (and Scale class) integrates the use of Units in ScaledType.
     /// </remarks>
-    public class ScaledUnit
+    public class ScaledUnit : ICloneable
     {
 #if USE_LOG4NET
-        static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        static readonly log4net.ILog Log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 #endif
 
+        #region Operators
         /// <summary>
         /// Equals: is the left side (syntactical) equal to the right side.
         /// </summary>
         /// <param name="left">a scale to compare</param>
         /// <param name="right">a scale to compare</param>
         /// <returns>true if the units and exponent on the left side are (syntactical) equal to the ones from the right side</returns>
-        public static bool operator ==(ScaledUnit left, ScaledUnit right)
+        public static bool operator ==(ScaledUnit? left, ScaledUnit? right)
         {
             if (ReferenceEquals(left, right)) return true;
-            if (((object)left == null) && ((object)right == null)) return true;
-            if (((object)left == null) || ((object)right == null)) return false;
+            if ((left is null) && (right is null)) return true;
+            if ((left is null) || (right is null)) return false;
             return left.Equals(right);
         }
 
@@ -39,12 +36,14 @@ namespace As.Tools.Data.Scales
         /// <param name="left">a scale to compare</param>
         /// <param name="right">a scale to compare</param>
         /// <returns>true if the units and exponent on the left side are (syntactical) inequal to the ones from the right side</returns>
-        public static bool operator !=(ScaledUnit left, ScaledUnit right)
+        public static bool operator !=(ScaledUnit? left, ScaledUnit? right)
         {
             return !(left == right);
         }
+        #endregion Operators
 
-        public static bool TryParse(string value, out Unit unit)
+        #region Static Actions
+        public static bool TryParse(string? value, out Unit unit)
         {
             if (string.IsNullOrWhiteSpace(value))
             {
@@ -57,17 +56,21 @@ namespace As.Tools.Data.Scales
             if (!result) result = UnitTimeX.TryParse(value, out unit);
             if (!result) result = UnitRotationX.TryParse(value, out unit);
 #if USE_LOG4NET
-            if (!result) log.Debug($"ScaleUnit: value not recognised: '{value}'");
+            if (!result) Log.Debug($"ScaleUnit: value not recognised: '{value}'");
 #endif
             return result;
         }
+        #endregion Static Actions
+
+        #region .ctor
+        public ScaledUnit() : this(Unit.c) {}
 
         /// <summary>
         /// .ctor for a scale with given unit and (optional) exponent.
         /// </summary>
         /// <param name="unit">Unit for this scale</param>
         /// <param name="exp">Exponent for this scale (default: 1)</param>
-        public ScaledUnit(Unit unit = Unit.c, int exp = 1)
+        public ScaledUnit(Unit unit, int exp = 1)
         {
             if (exp == 0)
             {
@@ -90,7 +93,9 @@ namespace As.Tools.Data.Scales
             Unit = other.Unit;
             Exp = other.Exp;
         }
+        #endregion .ctor
 
+        #region Properties
         /// <summary>
         /// Unit the scale is in.
         /// </summary>
@@ -100,12 +105,28 @@ namespace As.Tools.Data.Scales
         /// The power to which the Unit is raised for this scale.
         /// </summary>
         public int Exp { get; private set; }
+        #endregion Properteis
+
+        #region Actions
+        public ScaledUnit Clone()
+        {
+            return new ScaledUnit(this);
+        }
+
+        object ICloneable.Clone()
+        {
+            return new ScaledUnit(this);
+        }
 
         /// <summary>
-        /// Increment the Exponent with an given value.
+        /// Increment the Exponent with an given _value.
         /// </summary>
         /// <param name="value">Value to add to the exponent.</param>
         public void ExpAdd(int value) { Exp += value; }
+
+        public void ExpSet(int value) { if (value != 0) Exp = value; }
+
+        public void ExpReset() => ExpSet(1);
 
         /// <summary>
         /// Factor between the Unit and its base unit, taking the Exponent into account.
@@ -113,12 +134,12 @@ namespace As.Tools.Data.Scales
         /// <returns>Unit.Factor raised by the power of Exponent.</returns>
         public double Factor()
         {
-            switch (Exp)
+            return Exp switch
             {
-                case 0: return 1.0;
-                case 1: return Unit.Factor();
-                default: return Math.Pow(Unit.Factor(), Exp);
-            }
+                0 => 1.0,
+                1 => Unit.Factor(),
+                _ => Math.Pow(Unit.Factor(), Exp),
+            };
         }
 
         /// <summary>
@@ -126,18 +147,19 @@ namespace As.Tools.Data.Scales
         /// </summary>
         /// <param name="obj">Other scale to compare with</param>
         /// <returns>true if this scale units and exponent are (syntactical) equal to the other ones</returns>
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             var scale = obj as ScaledUnit;
-            return scale != null &&
-                   Unit == scale.Unit &&
-                   Exp == scale.Exp;
+            return
+                (scale is not null) &&
+                (Unit == scale.Unit) &&
+                (Exp == scale.Exp);
         }
 
         /// <summary>
         /// GetHashCode: Calculate the hash code for this scale.
         /// </summary>
-        /// <returns>Hash value</returns>
+        /// <returns>Hash _value</returns>
         public override int GetHashCode()
         {
             var hashCode = -2002594041;
@@ -168,5 +190,6 @@ namespace As.Tools.Data.Scales
         {
             return ToString(append_brackets: true, reciproce: false);
         }
+        #endregion Actions
     }
 }

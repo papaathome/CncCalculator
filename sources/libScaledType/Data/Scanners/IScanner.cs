@@ -6,12 +6,12 @@
     public interface IScanner
     {
         /// <summary>
-        /// Input file (null if not nusing a file)
+        /// InputStream file (null if not nusing a file)
         /// </summary>
-        string FileName { get; }
+        string? FileName { get; }
 
         /// <summary>
-        /// Include newlines in buffer.
+        /// Include newlines in Buffer.
         /// </summary>
         bool IncludeNewlines { get; set; }
 
@@ -26,40 +26,40 @@
         bool ScanWhitespace { get; set; }
 
         /// <summary>
-        /// Current parser state, top of states stack.
+        /// Current parser state, top of States stack.
         /// </summary>
         /// <returns></returns>
         object GetState();
 
         /// <summary>
-        /// Change current parser state, replace top of states stack.
+        /// Change current parser state, replace top of States stack.
         /// </summary>
         /// <param name="value">New parster state</param>
-        /// <remarks>Lookahead buffer is flushed</remarks>
+        /// <remarks>Lookahead Buffer is flushed</remarks>
         void SetState(object value);
 
         /// <summary>
-        /// Change current parser state, push new on top of states stack.
+        /// Change current parser state, push new on top of States stack.
         /// </summary>
         /// <param name="value">New parser state</param>
-        /// <remarks>Lookahead buffer is flushed</remarks>
+        /// <remarks>Lookahead Buffer is flushed</remarks>
         void PushState(object value);
 
         /// <summary>
-        /// Change current parser state, pop current state from top of states stack.
+        /// Change current parser state, pop current state from top of States stack.
         /// No changes if the stack has only one state left.
         /// </summary>
-        /// <remarks>Lookahead buffer is flushed</remarks>
+        /// <remarks>Lookahead Buffer is flushed</remarks>
         void PopState();
 
         /// <summary>
-        /// Get the next available token from the input stream.
+        /// Get the next available token from the InputStream stream.
         /// </summary>
         /// <returns>The next token which might be ERROR or EOS or any other one defined.</returns>
         Token GetToken();
 
         /// <summary>
-        /// Look ahead at the next available token from the input stream
+        /// Look ahead at the next available token from the InputStream stream
         /// </summary>
         /// <returns>The next available token which might be ERROR or EOS or any other one defined.</returns>
         Token PeekToken();
