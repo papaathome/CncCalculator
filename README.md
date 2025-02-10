@@ -5,7 +5,7 @@ Calculator for CNC feed and speed, with conversion of units from or to inches an
 [Git repository](https://github.com/papaathome/CncCalculator)
 
 
-![screenshot](https://github.com/papaathome/CncCalculator/doc/CncCalculator_screenshot.jpg)
+![screenshot](https://github.com/papaathome/CncCalculator/blob/main/doc/CncCalculator_screenshot.jpg)
 
 
 Overview
