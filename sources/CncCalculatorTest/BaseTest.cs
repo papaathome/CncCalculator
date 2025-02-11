@@ -12,7 +12,7 @@
         /// </summary>
         /// <param name="result">exception value to type check</param>
         /// <param name="expected">exception value to type check against</param>
-        protected void AssertExceptionType(
+        protected static void AssertExceptionType(
             Exception? result,
             Exception? expected)
         {
@@ -34,7 +34,7 @@
         /// <param name="value">X, value to check</param>
         /// <param name="expected">Y, value to check against</param>
         /// <param name="relative_tolerance">mismatch fraction allowed</param>
-        protected void AssertFloatIsNear(
+        protected static void AssertFloatIsNear(
             double value,
             double expected,
             double relative_tolerance = DefaultRelativeFloatingPointTolerance)

@@ -17,10 +17,6 @@
 
     static public class UnitLengthX
     {
-#if USE_LOG4NET
-        static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-#endif
-
         static readonly Unit BASE = Unit.m;
 
         static public double Factor(this UnitLength me)
@@ -37,11 +33,7 @@
                 case UnitLength.  yd: return (1250.0 / 1143.0) * UnitLength.m.Factor(); //       yard [yd/m],    1250 (international) yards = 1143 meters
                 case UnitLength.  ft: return 3.0 * UnitLength.yd.Factor();              //       foot [ft/yd],      3 ft = 1 yd
                 case UnitLength.inch: return 36.0 * UnitLength.yd.Factor();             //       inch [in/yd],     36 in = 1 yd
-                default:
-#if USE_LOG4NET
-                    log.Debug($"Lengths: type not recognised: '(UnitLength)0x{(ulong)me:x16}'");
-#endif
-                    return 0.0;
+                default: return 0.0;
             }
         }
 
@@ -65,9 +57,6 @@
                 case UnitLength.inch: return (append_brackets) ? "[in]" : "in";
                 default:
                     var msg = $"(UnitLength)0x{(ulong)me:x16}";
-#if USE_LOG4NET
-                    log.Debug($"Lengths: type not recognised: '{msg}'");
-#endif
                     return (append_brackets) ? $"[{msg}]" : msg;
             }
         }
@@ -87,9 +76,6 @@
                 case UnitLength.inch: return "inch:  36 [in] = 1 [yd]";
                 default:
                     var msg = $"(UnitLength)0x{(ulong)me:x16}";
-#if USE_LOG4NET
-                    log.Debug($"Lengths: type not recognised: '{msg}'");
-#endif
                     return $"Length: [{msg}]";
                     }
         }

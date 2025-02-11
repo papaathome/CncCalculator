@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.ObjectModel;
 
 namespace As.Applications.Test.Models
 {
@@ -20,6 +15,7 @@ namespace As.Applications.Test.Models
         static readonly ReadOnlyCollection<string> Lengths = new([FIRST, SECOND, "[in]", "[ft]"]);
 
         #region .ctor tests
+        // TODO
         #endregion .ctor tests
     }
 }

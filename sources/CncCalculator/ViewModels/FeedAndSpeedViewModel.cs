@@ -10,18 +10,12 @@ using Caliburn.Micro;
 using Microsoft.Win32;
 using Microsoft.Xaml.Behaviors.Core;
 
-using ILogger = As.Applications.Loggers.ILogger;
-using LogManager = Caliburn.Micro.LogManager;
-
 namespace As.Applications.ViewModels
 {
     public class FeedAndSpeedViewModel :
         Screen,
         IDataErrorInfo
     {
-        static readonly ILogger Log
-            = (ILogger)LogManager.GetLog(typeof(CncCalculatorViewModel));
-
         public FeedAndSpeedViewModel()
         {
             CuttingDepth = new DoubleSTViewModel(

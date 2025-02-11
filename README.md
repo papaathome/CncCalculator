@@ -13,18 +13,22 @@ Overview
 
 **Why another tool for calculating CNC feeds and speeds?**
 
-There are already several tools available on the internet which will do the job and are managed by companies with more knowledge and resources available than just another lone coder.
-All have their strong and also some weak points. And that is where the differences are. Also, what a strong point is for one can be a a weak point for another, just depending on your point of view.
-You should choose the tool with as many strong points that help and as few weak points that bothers you. That is how CncCalculator can make a difference.
+There are already several tools available on the internet which will do the job and
+are managed by companies with more knowledge and resources available than just another
+lone coder. All have their strong and also some weak points. And that is where the
+differences are. Also, what a strong point is for one can be a a weak point for another,
+just depending on your point of view. You should choose the tool with as many strong
+points that help and as few weak points that bothers you. That is how CncCalculator can
+make a difference.
 
-What are the points for CncCalculator that make it interesting? You can classify it as a strong or weak point for yourself.
+What are the points for CncCalculator that make it interesting? You can classify it as
+a strong or weak point for yourself.
  * All source code is available and a permissive licence form.
  * Selection of units, e.g.: [in] or [mm].
  * Conversion of units, e.g.: from [in/min] to [mm/sec]
  * Includes a list of materials with preset values.
  * Includes a list of tools with preset values.
  * Can import any FreeCAD tools library (both v0.18 or before and v0.19 or better)
- * Where you put it on the screen there it will be the next time you start it.
 
 
 Quick start
@@ -33,16 +37,11 @@ Quick start
 Assuming that you know what ‘Feeds’ and ‘Speeds’ are this is a quick run
 trough for CncCalculator.
 
-When you start CncCalculator for the first time it comes up on a default
-location and using default settings. You can drag the form to any location and
-when you close the application it wil reopen on exact the location where you
-closed it. This is handy when you arrange your (CNC related) tools on fixed
-positions on the screen.
-
-By default, on the top you find a menu bar with entries like ‘file’ and
-‘about’, below that is an tools bar. There are two tabs available, one for
-calculating 'Feeds and Speeds' and a second one for doing independent
-conversions of lengts and speeds to a number of units..
+When you start CncCalculator it selects the 'Feeds and Speeds' tab by default.
+On the top you find a menu bar with entries like ‘file’ and ‘about’, below that
+is an tools bar. There are two tabs available, one for calculating 
+'Feeds and Speeds' and a second one for doing independent conversions of lengts
+and speeds to a number of units.
 
 On 'Feeds and Speeds': The tools bar contains two selection buttons, one for
 a tool and another for a material. Selecting one will fill in the ‘Tool’ or
@@ -105,5 +104,5 @@ Project details
  * Language: C#
  * Package dependencies:
     * Caliburn micro
-    * Log4Net (not essential but handy for debugging.)
     * Newtonsoft.Json
+    * NUnit (for unit testing)

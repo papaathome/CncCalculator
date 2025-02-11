@@ -220,10 +220,6 @@
     /// </summary>
     public static class UnitX
     {
-#if USE_LOG4NET
-        static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-#endif
-
         /// <summary>
         /// Factor against the base unit (for US or imperial units firt to a base unit in the US or imperial unit system)
         /// </summary>
@@ -238,11 +234,7 @@
                 case BaseUnit.Weight:   return ((UnitWeight)me).Factor();
                 case BaseUnit.Time:     return ((UnitTime)me).Factor();
                 case BaseUnit.Rotation: return ((UnitRotation)me).Factor();
-                default:
-#if USE_LOG4NET
-                    log.Debug($"Unit: type not recognised: '(Unit)0x{(ulong)me:x16}'");
-#endif
-                    return 0.0;
+                default: return 0.0;
             }
         }
 
@@ -260,11 +252,7 @@
                 case BaseUnit.Weight: return ((UnitWeight)me).Base();
                 case BaseUnit.Time: return ((UnitTime)me).Base();
                 case BaseUnit.Rotation: return ((UnitRotation)me).Base();
-                default:
-#if USE_LOG4NET
-                    log.Debug($"Unit: type not recognised: '(Unit)0x{(ulong)me:x16}'");
-#endif
-                    throw new ArgumentException("Unit not recognised.", me.ToString());
+                default: throw new ArgumentException("Unit not recognised.", me.ToString());
             }
         }
 
@@ -284,9 +272,6 @@
                 case BaseUnit.Rotation: return ((UnitRotation)me).ToString(append_brackets);
                 default:
                     var msg = $"(Unit)0x{(ulong)me:x16}";
-#if USE_LOG4NET
-                    log.Debug($"Unit: type not recognised: '{msg}'");
-#endif
                     return (append_brackets) ? $"[{msg}]" : msg;
             }
         }
@@ -307,9 +292,6 @@
                 case BaseUnit.Rotation: return ((UnitRotation)me).Description();
                 default:
                     var msg = $"(Unit)0x{(ulong)me:x8}";
-#if USE_LOG4NET
-                    log.Debug($"Unit: type not recognised: '{msg}'");
-#endif
                     return $"Unit: {msg}";
             }
         }

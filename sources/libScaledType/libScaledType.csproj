@@ -13,8 +13,4 @@
     <None Remove="Controls\**" />
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="log4net" Version="3.0.3" />
-  </ItemGroup>
-
 </Project>

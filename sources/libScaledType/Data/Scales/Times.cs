@@ -11,10 +11,6 @@
 
     public static class UnitTimeX
     {
-#if USE_LOG4NET
-        static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-#endif
-
         static readonly Unit BASE = Unit.s;
 
         static public double Factor(this UnitTime me)
@@ -24,11 +20,7 @@
                 case UnitTime.s:   return 1.0;                                 // second [s, "],    1" = Standard unit of time
                 case UnitTime.min: return UnitTime.s.Factor() / 60.0;          // minute [min, '], 60" = 1'
                 case UnitTime.h:   return UnitTime.s.Factor() / (60.0 * 60.0); //   hour [h],      60' = 1 h
-                default:
-#if USE_LOG4NET
-                    log.Debug($"Time: type not recognised: '(UnitTime)0x{(ulong)me:x16}'");
-#endif
-                    return 0.0;
+                default: return 0.0;
             }
         }
 
@@ -46,9 +38,6 @@
                 case UnitTime.  h: return (append_brackets) ? "[h]" : "h";
                 default:
                     var msg = $"(UnitTime)0x{(ulong)me:x16}";
-#if USE_LOG4NET
-                    log.Debug($"Time: type not recognised: '{msg}'");
-#endif
                     return (append_brackets) ? $"[{msg}]" : msg;
                     }
         }
@@ -62,9 +51,6 @@
                 case UnitTime.  h: return "hour: 1 [h] = 3600 [s]";
             }
             var msg = $"(UnitTime)0x{(ulong)me:x16}";
-#if USE_LOG4NET
-            log.Debug($"Time: type not recognised: '{msg}'");
-#endif
             return $"Time [{msg}]";
         }
 

@@ -7,9 +7,6 @@ namespace As.Tools.Data.Scanners
     /// </summary>
     public abstract class Scanner : IScanner
     {
-#if USE_LOG4NET
-        protected static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-#endif
         protected const char NEWLINE = '\n';
 
         /// <summary>

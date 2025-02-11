@@ -321,6 +321,7 @@ namespace As.Tools.Test.Data.Scales
         #endregion Operator tests
 
         #region Action tests
+        // TODO:
         // AreEqual_ScaleScale -> operator ==
         // Equals -> AreEqual
 

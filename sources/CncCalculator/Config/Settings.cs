@@ -5,20 +5,12 @@ using System.Windows;
 using System.Xml.Serialization;
 
 using As.Applications.IO;
-using As.Applications.Loggers;
 using As.Applications.Validation;
-
-using ILogger = As.Applications.Loggers.ILogger;
-
-[assembly: log4net.Config.XmlConfigurator(
-    ConfigFile = @".\CncCalculator.log4net.config",
-    Watch = true)]
 
 namespace As.Applications.Config
 {
     public class Settings : IChanged, IXmlProcessing
     {
-        static readonly ILogger Log = new CmLog4NetLogger(typeof(Settings));
 
         static Settings()
         {
@@ -30,7 +22,6 @@ namespace As.Applications.Config
                 .GetExecutingAssembly()
                 .GetName()
                 .Version;
-            Log.InfoFormat($"Settings: {AppName} v{AppVersion}");
 
             // see: https://learn.microsoft.com/en-us/dotnet/standard/commandline/
             // see: https://stackoverflow.com/questions/20342061/disable-dll-culture-folders-on-compile (reply by David Rogers)
@@ -61,7 +52,6 @@ namespace As.Applications.Config
                     opConfig);
 
             rootCommand.Invoke(Environment.GetCommandLineArgs());
-            Log.DebugFormat($"Settings: configuration path = \"{AppConfigPath}\"");
 
             StoreOnExit = XmlStream.Read(
                 AppConfigPath,
@@ -118,21 +108,9 @@ namespace As.Applications.Config
                         create_backup: true,
                         noexcept: true);
                 }
-                Log.InfoFormat($"Settings: Release {AppName} v{AppVersion}");
             }
-            catch (Exception x)
-            {
-                try { Log.ErrorFormat("Current_Exit: exception", x); }
-                catch { /* never mind */ }
-            }
+            catch { /* never mind */ }
         }
-
-        /// <summary>
-        /// Return F(Type) -> ILogger
-        /// </summary>
-        /// <returns>Function that creates an ILogger for a type</returns>
-        public static Func<Type, ILogger> LogGenerator()
-            => type => new CmLog4NetLogger(type);
         #endregion Static actions
 
         public Settings()

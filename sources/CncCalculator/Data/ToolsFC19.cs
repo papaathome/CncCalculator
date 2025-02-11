@@ -1,6 +1,4 @@
-﻿#define USE_LOG4NET
-
-using System.IO;
+﻿using System.IO;
 
 using As.Applications.Data.Json;
 
@@ -42,11 +40,6 @@ namespace As.Applications.Data
 
     public class ToolsList
     {
-#if USE_LOG4NET
-        protected static readonly log4net.ILog Log
-            = log4net.LogManager.GetLogger(nameof(ToolsList));
-#endif
-
         public static ToolsList? GetData(
             string path,
             bool read_bits = true,
@@ -92,21 +85,7 @@ namespace As.Applications.Data
                         var b = Tool.GetData(p);
                         if (b != null) result.Tools.Add(t.Nr, b);
                     }
-#if USE_LOG4NET
-                    catch (Exception x)
-                    {
-                        Log.ErrorFormat($"ToolsList: {x.Message.Trim()}; path = \"{p}\"");
-                        for (
-                            var i = x.InnerException;
-                            i != null;
-                            i = i.InnerException)
-                        {
-                            Log.ErrorFormat($"ToolsList: {x.Message.Trim()}");
-                        }
-                    }
-#else
                     catch { }
-#endif
                 }
             }
             return result;

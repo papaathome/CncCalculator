@@ -11,10 +11,6 @@
     /// </remarks>
     public class ScaledUnit : ICloneable
     {
-#if USE_LOG4NET
-        static readonly log4net.ILog Log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-#endif
-
         #region Operators
         /// <summary>
         /// Equals: is the left side (syntactical) equal to the right side.
@@ -55,9 +51,6 @@
             if (!result) result = UnitWeightX.TryParse(value, out unit);
             if (!result) result = UnitTimeX.TryParse(value, out unit);
             if (!result) result = UnitRotationX.TryParse(value, out unit);
-#if USE_LOG4NET
-            if (!result) Log.Debug($"ScaleUnit: value not recognised: '{value}'");
-#endif
             return result;
         }
         #endregion Static Actions

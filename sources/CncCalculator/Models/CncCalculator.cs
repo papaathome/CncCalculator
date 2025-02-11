@@ -1,6 +1,4 @@
-﻿#define USE_LOG4NET
-
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -16,10 +14,6 @@ namespace As.Applications.Models
     {
 #pragma warning disable IDE1006 // Naming Styles
 #pragma warning disable CA1822 // Mark members as static
-
-#if USE_LOG4NET
-        static readonly log4net.ILog Log = log4net.LogManager.GetLogger(nameof(CncCalculator));
-#endif
 
         /// <summary>
         /// Calculator: The maths for CNC Feeds and Speeds.
@@ -96,20 +90,7 @@ namespace As.Applications.Models
                 }
                 return true;
             }
-#if USE_LOG4NET
-            catch (Exception x)
-            {
-                var msg = x.Message.Trim();
-                SetError($"{msg}; path = \"{path}\"", nameof(Tools));
-                Log.ErrorFormat($"LoadTools: {x.Message.Trim()}; path = \"{path}\"");
-                for (var i = x.InnerException; i != null; i = i.InnerException)
-                {
-                    Log.ErrorFormat($"LoadTools: {x.Message.Trim()}");
-                }
-            }
-#else
             catch { }
-#endif
             return false;
         }
 
@@ -220,20 +201,7 @@ namespace As.Applications.Models
                 }
                 return true;
             }
-#if USE_LOG4NET
-            catch (Exception x)
-            {
-                var msg = x.Message.Trim();
-                SetError($"{msg}; path = \"{path}\"", nameof(Materials));
-                Log.ErrorFormat($"LoadMaterials: {msg}; path = \"{path}\"");
-                for (var i = x.InnerException; i != null; i = i.InnerException)
-                {
-                    Log.ErrorFormat($"LoadMaterials: {x.Message.Trim()}");
-                }
-            }
-#else
             catch { }
-#endif
             return false;
         }
 

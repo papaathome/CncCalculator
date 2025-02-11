@@ -1,8 +1,8 @@
-﻿using System.Numerics;
+﻿#if USE_SI_UNITS
+using System.Numerics;
 
 namespace As.Tools.Data.Scales
 {
-#if USE_SI_UNITS
     // TODO: use SI units
 
     /// <summary>Defines a scaled number type.</summary>
@@ -190,5 +190,5 @@ namespace As.Tools.Data.Scales
         /// </summary>
         kat
     }
-#endif // USE_SI_UNITS
 }
+#endif // USE_SI_UNITS

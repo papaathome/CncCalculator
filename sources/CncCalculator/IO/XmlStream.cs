@@ -3,16 +3,10 @@ using System.Xml.Serialization;
 
 using As.Applications.Validation;
 
-using ILogger = As.Applications.Loggers.ILogger;
-using LogManager = Caliburn.Micro.LogManager;
-
 namespace As.Applications.IO
 {
     public static class XmlStream
     {
-        static readonly ILogger Log
-            = (ILogger)LogManager.GetLog(typeof(XmlStream));
-
         public const string EXTENSION = ".xml";
 
         /// <summary>
@@ -56,12 +50,10 @@ namespace As.Applications.IO
                 TryIChangedReset(ref v);
                 return true;
             }
-            catch (Exception x)
+            catch
             {
                 if (noexcept)
                 {
-                    try { Log.ErrorFormat($"ReadOf{nameof(T)}: fail; path = \"{path}\"", x); }
-                    catch { /* never mind */ }
                     result = default!;
                     return false;
                 }
@@ -88,7 +80,7 @@ namespace As.Applications.IO
         {
             try
             {
-                if (value == null) throw new ArgumentNullException(nameof(value));
+                ArgumentNullException.ThrowIfNull(value);
 
                 var p = Path.GetDirectoryName(path);
                 if (!string.IsNullOrEmpty(p) && !Directory.Exists(p))
@@ -106,13 +98,9 @@ namespace As.Applications.IO
                 TryIChangedReset(ref value);
                 return true;
             }
-            catch (Exception x)
+            catch
             {
-                if (noexcept)
-                {
-                    Log.ErrorFormat($"WriteOf{nameof(T)}: fail; path = \"{path}\"", x);
-                    return false;
-                }
+                if (noexcept) return false;
                 throw;
             }
         }
@@ -128,20 +116,13 @@ namespace As.Applications.IO
                 {
                     // try delete old *.*~.
                     try { File.Delete(c); }
-                    catch (Exception x)
-                    {
-                        Log.ErrorFormat($"CreateBackup: can not remove old backup file; {x.Message.Trim()}; path=\"{c}\"");
-                        can_move = false;
-                    }
+                    catch { can_move = false; }
                 }
                 if (can_move)
                 {
                     // move *.* to *.*~
                     try { File.Move(path, c); }
-                    catch (Exception x)
-                    {
-                        Log.ErrorFormat($"CreateBackup: can not move file; {x.Message.Trim()}; path=\"{path}\"");
-                    }
+                    catch { /* never mind */ }
                 }
             }
         }

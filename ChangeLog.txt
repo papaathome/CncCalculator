@@ -26,6 +26,7 @@ Version: 0.3.0b not yet released.
  * v libScaledType using INumber<T> for values, can use any type that supports this interface.
  * v Added NUnit tests on CncCalculator classes
  * v Added Converter tag, moved calculations to 'Feeds and Speeds' tab
+ * v Not using Log4Net, no need to log.
 
 Version: 0.1b 13/X/2024
  * v Changed MIT license to 'MIT No Attribution'

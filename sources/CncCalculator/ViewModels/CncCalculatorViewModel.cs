@@ -2,16 +2,10 @@
 
 using Caliburn.Micro;
 
-using ILogger = As.Applications.Loggers.ILogger;
-using LogManager = Caliburn.Micro.LogManager;
-
 namespace As.Applications.ViewModels
 {
     public class CncCalculatorViewModel : Conductor<object>, IDataErrorInfo
     {
-        static readonly ILogger Log
-            = (ILogger)LogManager.GetLog(typeof(CncCalculatorViewModel));
-
         public CncCalculatorViewModel()
         {
             FeedAndSpeed = new FeedAndSpeedViewModel();

@@ -16,10 +16,6 @@
 
     static public class UnitWeightX
     {
-#if USE_LOG4NET
-        static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-#endif
-
         static readonly Unit BASE = Unit.g;
 
         static public double Factor(this UnitWeight me)
@@ -35,11 +31,7 @@
                 case UnitWeight.oz: return 16.0 * UnitWeight.lb.Factor();        //    ounce [oz],   16 oz = 1 lb
                 case UnitWeight.dr: return 16.0 * 16.0 * UnitWeight.lb.Factor(); //     dram [dr],   16 dr = 1 oz
                 case UnitWeight.gr: return 7000.0 * UnitWeight.lb.Factor();      //    grain [gr], 7000 gr = 1 lb
-                default:
-#if USE_LOG4NET
-                    log.Debug($"Weight: type not recognised: '(UnitWeight)0x{(ulong)me:x16}'");
-#endif
-                    return 0.0;
+                default: return 0.0;
             }
         }
 
@@ -62,9 +54,6 @@
                 case UnitWeight.gr: return (append_brackets) ? "[gr]" : "gr";
                 default:
                     var msg = $"(UnitWeight)0x{(ulong)me:x16}";
-#if USE_LOG4NET
-                    log.Debug($"Weight: type not recognised: '{msg}'");
-#endif
                     return (append_brackets) ? $"[{msg}]" : msg;
             }
         }
@@ -83,9 +72,6 @@
                 case UnitWeight.gr: return "grain 7000 [gr] = 1 [lb]";
                 default:
                     var msg = $"(UnitWeight)0x{(ulong)me:x16}";
-#if USE_LOG4NET
-                    log.Debug($"Weight: type not recognised: '{msg}'");
-#endif
                     return $"Weight: {msg}";
             }
         }

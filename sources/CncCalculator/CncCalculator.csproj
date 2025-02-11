@@ -68,9 +68,6 @@
 
   <ItemGroup>
     <PackageReference Include="Caliburn.Micro" Version="4.0.230" />
-    <PackageReference Include="log4net" Version="3.0.3">
-      <TreatAsUsed>true</TreatAsUsed>
-    </PackageReference>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
   </ItemGroup>

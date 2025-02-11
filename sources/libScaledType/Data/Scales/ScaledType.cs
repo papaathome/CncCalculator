@@ -7,10 +7,6 @@ namespace As.Tools.Data.Scales
         IScaledType<ScaledType<T>, T>
         where T : INumber<T>
     {
-#if USE_LOG4NET
-        protected static readonly log4net.ILog Log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-#endif
-
         const NumberStyles Numeric =
             NumberStyles.AllowLeadingWhite |
             NumberStyles.AllowTrailingWhite |
@@ -184,7 +180,6 @@ namespace As.Tools.Data.Scales
             if (left.Scale != right.Scale)
             {
                 var msg = $"ScaledType<T>: operation not supported: {left.Scale} + {right.Scale}";
-                //log.Debug(msg);
                 throw new ArgumentOutOfRangeException(msg);
             }
             return new ScaledType<T>(left.Value + right.Value, left.Scale);
@@ -202,7 +197,6 @@ namespace As.Tools.Data.Scales
             if (left.Scale != right.Scale)
             {
                 var msg = $"ScaledType<T>: operation not supported: {left.Scale} - {right.Scale}";
-                //log.Debug(msg);
                 throw new ArgumentOutOfRangeException(msg);
             }
             return new ScaledType<T>(left.Value - right.Value, left.Scale);
@@ -276,9 +270,6 @@ namespace As.Tools.Data.Scales
         {
             if (TrySetScale(scale, out string err)) return;
             var msg = $"ScaledType<{nameof(T)}>: .ctor arg={nameof(scale)}; {err}";
-#if USE_LOG4NET
-            Log.Debug(msg);
-#endif
             throw new ArgumentException(msg, nameof(scale));
         }
 
@@ -374,9 +365,6 @@ namespace As.Tools.Data.Scales
             if (Scale != other.Scale)
             {
                 var msg = $"Assign: not supported: Value {Scale} = {other.Value} {other.Scale}";
-#if USE_LOG4NET
-                Log.Debug(msg);
-#endif
                 throw new ArgumentOutOfRangeException(msg);
             }
             Value = other.Value;
